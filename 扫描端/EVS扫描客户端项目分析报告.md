@@ -113,7 +113,7 @@
 | AES-ECB 加密后 POST（与 `secret.js` 算法一致） | ✅ 成功 |
 | 返回内容 | `ok: true`，JWT `Authorization`，用户：张晓红 / XYY057 |
 
-**加密说明**：密钥 `ZTE@FSSCZTE@FSSC`，模式 AES-128-ECB，PKCS7 填充，Base64 输出。
+**加密说明**：密钥 `******`，模式 AES-128-ECB，PKCS7 填充，Base64 输出。
 
 ### 2.3 登录后接口探测
 

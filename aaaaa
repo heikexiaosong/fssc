@@ -1,0 +1,119 @@
+[arthas@979599]$ watch cn.ztessc.util.InterestCalculatorWithDate calculateEstimatedInterest "{params}" -b -s -x 3
+Press Q or Ctrl+C to abort.
+Affect(class count: 1 , method count: 1) cost in 1306 ms, listenerId: 1
+method=cn.ztessc.util.InterestCalculatorWithDate.calculateEstimatedInterest location=AtEnter
+ts=2026-06-12 19:55:04; [cost=4.44547ms] result=@ArrayList[
+    @Object[][
+        @BigDecimal[
+            intVal=@BigInteger[0],
+            scale=@Integer[2],
+            precision=@Integer[1],
+            stringCache=@String[0.00],
+            INFLATED=@Long[-9223372036854775808],
+            INFLATED_BIGINT=@BigInteger[-9223372036854775808],
+            intCompact=@Long[0],
+            MAX_COMPACT_DIGITS=@Integer[18],
+            serialVersionUID=@Long[6108874887143696463],
+            threadLocalStringBuilderHelper=@[java.math.BigDecimal$1@4b64b459],
+            zeroThroughTen=@BigDecimal[][isEmpty=false;size=11],
+            ZERO_SCALED_BY=@BigDecimal[][isEmpty=false;size=16],
+            HALF_LONG_MAX_VALUE=@Long[4611686018427387903],
+            HALF_LONG_MIN_VALUE=@Long[-4611686018427387904],
+            ZERO=@BigDecimal[0],
+            ONE=@BigDecimal[1],
+            TEN=@BigDecimal[10],
+            ROUND_UP=@Integer[0],
+            ROUND_DOWN=@Integer[1],
+            ROUND_CEILING=@Integer[2],
+            ROUND_FLOOR=@Integer[3],
+            ROUND_HALF_UP=@Integer[4],
+            ROUND_HALF_DOWN=@Integer[5],
+            ROUND_HALF_EVEN=@Integer[6],
+            ROUND_UNNECESSARY=@Integer[7],
+            double10pow=@double[][isEmpty=false;size=23],
+            float10pow=@float[][isEmpty=false;size=11],
+            LONG_TEN_POWERS_TABLE=@long[][isEmpty=false;size=19],
+            BIG_TEN_POWERS_TABLE=@BigInteger[][isEmpty=false;size=19],
+            BIG_TEN_POWERS_TABLE_INITLEN=@Integer[19],
+            BIG_TEN_POWERS_TABLE_MAX=@Integer[304],
+            THRESHOLDS_TABLE=@long[][isEmpty=false;size=19],
+            DIV_NUM_BASE=@Long[4294967296],
+            LONGLONG_TEN_POWERS_TABLE=@long[][][isEmpty=false;size=20],
+            $assertionsDisabled=@Boolean[true],
+            serialVersionUID=@Long[-8742448824652078965],
+        ],
+        @Date[2025-10-09 00:00:00,000],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@7fb2e11b],
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@69aa820e],
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@650b0bff],
+        ],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@ba3ad7b],
+        ],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@63f13f2d],
+        ],
+    ],
+]
+method=cn.ztessc.util.InterestCalculatorWithDate.calculateEstimatedInterest location=AtExit
+ts=2026-06-12 19:55:05; [cost=1.8393479665682167E10ms] result=@ArrayList[
+    @Object[][
+        @BigDecimal[
+            intVal=@BigInteger[0],
+            scale=@Integer[2],
+            precision=@Integer[1],
+            stringCache=@String[0.00],
+            INFLATED=@Long[-9223372036854775808],
+            INFLATED_BIGINT=@BigInteger[-9223372036854775808],
+            intCompact=@Long[0],
+            MAX_COMPACT_DIGITS=@Integer[18],
+            serialVersionUID=@Long[6108874887143696463],
+            threadLocalStringBuilderHelper=@[java.math.BigDecimal$1@4b64b459],
+            zeroThroughTen=@BigDecimal[][isEmpty=false;size=11],
+            ZERO_SCALED_BY=@BigDecimal[][isEmpty=false;size=16],
+            HALF_LONG_MAX_VALUE=@Long[4611686018427387903],
+            HALF_LONG_MIN_VALUE=@Long[-4611686018427387904],
+            ZERO=@BigDecimal[0],
+            ONE=@BigDecimal[1],
+            TEN=@BigDecimal[10],
+            ROUND_UP=@Integer[0],
+            ROUND_DOWN=@Integer[1],
+            ROUND_CEILING=@Integer[2],
+            ROUND_FLOOR=@Integer[3],
+            ROUND_HALF_UP=@Integer[4],
+            ROUND_HALF_DOWN=@Integer[5],
+            ROUND_HALF_EVEN=@Integer[6],
+            ROUND_UNNECESSARY=@Integer[7],
+            double10pow=@double[][isEmpty=false;size=23],
+            float10pow=@float[][isEmpty=false;size=11],
+            LONG_TEN_POWERS_TABLE=@long[][isEmpty=false;size=19],
+            BIG_TEN_POWERS_TABLE=@BigInteger[][isEmpty=false;size=19],
+            BIG_TEN_POWERS_TABLE_INITLEN=@Integer[19],
+            BIG_TEN_POWERS_TABLE_MAX=@Integer[304],
+            THRESHOLDS_TABLE=@long[][isEmpty=false;size=19],
+            DIV_NUM_BASE=@Long[4294967296],
+            LONGLONG_TEN_POWERS_TABLE=@long[][][isEmpty=false;size=20],
+            $assertionsDisabled=@Boolean[true],
+            serialVersionUID=@Long[-8742448824652078965],
+        ],
+        @Date[2025-10-09 00:00:00,000],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@7fb2e11b],
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@69aa820e],
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@650b0bff],
+        ],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@ba3ad7b],
+        ],
+        @ArrayList[
+            @FmsLoanLedgerRecordDTO[cn.ztessc.dto.loan.FmsLoanLedgerRecordDTO@63f13f2d],
+        ],
+    ],
+]
+[arthas@979599]$
+
+
+
+
+

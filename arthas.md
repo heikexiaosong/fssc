@@ -13,7 +13,7 @@ watch cn.ztessc.service.innerloan.FmsInnerLoanLedgerRecordService bulidLoanLedge
 watch cn.ztessc.util.InterestCalculatorWithDate calculateEstimatedInterest "{params}" -b -s -x 3
 
 
-watch cn.ztessc.common.service.BaseService updateBatch "{params}" -b -x 3
+watch cn.ztessc.report.util.ZfsExcelUtil invokePost "{params, returnObj}" -s -x 3
 
 
 ### 推包

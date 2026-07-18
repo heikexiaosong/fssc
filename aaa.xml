@@ -1,0 +1,823 @@
+/**
+ * 还款类型常量
+ */
+var REPAY_TYPE = {
+    PRINCIPAL: '1',
+    INTEREST: '2'
+};
+
+/**
+ * 还本方式常量
+ */
+var REPAY_PRINCIPAL_TYPE = {
+    ONE_TIME: '01',
+    FIXED_AMOUNT: '02',
+    NON_FIXED_PRINCIPAL_REPAYMENT: '03',
+    EQUAL_INSTALLMENT: '04',
+    EQUAL_PRINCIPAL: '05'
+};
+
+/**
+ * 付息方式常量
+ */
+var PAY_INTEREST_TYPE = {
+    PRE_DEDUCT: '01',
+    ONE_TIME: '02',
+    WITH_PRINCIPAL: '03',
+    MONTHLY: '04',
+    QUARTERLY: '05',
+    SEMI_ANNUAL: '06',
+    ANNUAL: '07',
+    OTHER: '08'
+};
+
+/**
+ * 还本间隔类型常量
+ */
+var REPAY_INTERVAL_TYPE = {
+    MONTHLY: 'AY',
+    QUARTERLY: 'AJ',
+    SEMI_ANNUAL: 'ABN',
+    ANNUAL: 'AN'
+};
+
+/**
+ * 系统备注常量
+ */
+var SYSTEM_GENERATED_REMARK = '系统自动生成还款计划';
+
+/**
+ * 金额计算工具函数
+ */
+var AmountUtil = {
+    /**
+     * 四舍五入保留两位小数
+     */
+    round: function(amount) {
+        if (amount === null || amount === undefined) return 0;
+        return Math.round(amount * 100) / 100;
+    }
+};
+
+/**
+ * 日期工具函数
+ */
+var DateUtil = {
+    /**
+     * 日期格式化
+     */
+    formatDate: function(date, format) {
+        if (!date || this.isInvalidDate(date)) return '';
+        var year = date.getFullYear();
+        var month = String(date.getMonth() + 1).padStart(2, '0');
+        var day = String(date.getDate()).padStart(2, '0');
+        return format.replace('yyyy', year)
+                    .replace('MM', month)
+                    .replace('dd', day);
+    },
+
+    /**
+     * 添加月份
+     */
+    addMonths: function(date, months) {
+        if (!date || this.isInvalidDate(date)) return null;
+        var result = new Date(date);
+        result.setMonth(result.getMonth() + months);
+        return result;
+    },
+
+    /**
+     * 添加天数
+     */
+    addDays: function(date, days) {
+        if (!date || this.isInvalidDate(date)) return null;
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    },
+
+    /**
+     * 获取有效日期
+     */
+    getValidDate: function(date) {
+        if (!date || this.isInvalidDate(date)) return null;
+        var result = new Date(date);
+        return result;
+    },
+
+    /**
+     * 检查是否是无效日期（如1970-01-01）
+     */
+    isInvalidDate: function(date) {
+        return date.getTime() === new Date(0).getTime();
+    },
+
+    /**
+     * 获取月份的最后一天
+     */
+    getLastDayOfMonth: function(date) {
+        if (!date || this.isInvalidDate(date)) return null;
+        var result = new Date(date);
+        result.setMonth(result.getMonth() + 1);
+        result.setDate(0);
+        return result;
+    },
+
+    /**
+     * 调整日期到有效日期
+     */
+    adjustToValidDate: function(date) {
+        if (!date || this.isInvalidDate(date)) return null;
+        var result = new Date(date);
+
+        // 检查是否是无效日期（如2月29日不存在的情况）
+        while (result.getMonth() !== date.getMonth()) {
+            result.setDate(result.getDate() + 1);
+        }
+
+        return result;
+    },
+
+    /**
+     * 计算两个日期之间的天数
+     */
+    daysBetween: function(startDate, endDate) {
+        if (!startDate || !endDate || this.isInvalidDate(startDate) || this.isInvalidDate(endDate)) {
+            return 0;
+        }
+        var oneDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
+        var diffTime = endDate.getTime() - startDate.getTime();
+        return Math.round(diffTime / oneDay);
+    }
+};
+
+/**
+ * 还款计划生成器构造函数
+ */
+function RepaymentPlanGenerator() {
+    // 构造函数
+}
+
+/**
+ * 生成完整的还款计划（还本+还息）
+ */
+RepaymentPlanGenerator.prototype.generatePlans = function(inputData) {
+    var result = [];
+
+    // 生成还本计划
+    var principalPlans = this.generatePrincipalPlan(inputData);
+
+    // 生成还息计划（基于还本计划）
+    var interestPlans = this.generateInterestPlans(principalPlans, inputData);
+
+    // 合并计划
+    result = result.concat(principalPlans).concat(interestPlans);
+
+    // 按还款日期排序
+    result.sort(function(a, b) {
+        return a.repayDate - b.repayDate;
+    });
+
+    return result;
+};
+
+/**
+ * 生成还本计划
+ */
+RepaymentPlanGenerator.prototype.generatePrincipalPlan = function(inputData) {
+    var repayPrincipalType = inputData.repayPrincipalType;
+
+    // 不固定还本，不生成计划
+    if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.NON_FIXED_PRINCIPAL_REPAYMENT) {
+        return [];
+    }
+
+    // 到期一次还本
+    if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.ONE_TIME) {
+        return this.generateOneTimePrincipalPlan(inputData);
+    }
+
+    // 分次定额
+    if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.FIXED_AMOUNT) {
+        return this.generateFixedAmountPrincipalPlan(inputData);
+    }
+
+    // 等额本金
+    if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.EQUAL_PRINCIPAL) {
+        return this.generateEqualPrincipalPlan(inputData);
+    }
+
+    // 等额本息
+    if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.EQUAL_INSTALLMENT) {
+        return this.generateEqualInstallmentPlan(inputData);
+    }
+
+    return [];
+};
+
+/**
+ * 基于还本计划生成还息计划
+ */
+RepaymentPlanGenerator.prototype.generateInterestPlans = function(principalPlans, inputData) {
+    var result = [];
+    var payInterestType = inputData.payInterestType;
+
+    // 其他付息方式，不生成计划
+    if (payInterestType === PAY_INTEREST_TYPE.OTHER) {
+        return [];
+    }
+
+    // 预扣利息、一次付清、利随本清
+    if (payInterestType === PAY_INTEREST_TYPE.PRE_DEDUCT ||
+        payInterestType === PAY_INTEREST_TYPE.ONE_TIME ||
+        payInterestType === PAY_INTEREST_TYPE.WITH_PRINCIPAL) {
+        return this.generateOneTimeInterestPlan(inputData);
+    }
+
+    // 按期付息
+    if (payInterestType === PAY_INTEREST_TYPE.MONTHLY ||
+        payInterestType === PAY_INTEREST_TYPE.QUARTERLY ||
+        payInterestType === PAY_INTEREST_TYPE.SEMI_ANNUAL ||
+        payInterestType === PAY_INTEREST_TYPE.ANNUAL) {
+        return this.generatePeriodicInterestPlans(principalPlans, inputData);
+    }
+
+    return [];
+};
+
+/**
+ * 生成一次性还本计划
+ */
+RepaymentPlanGenerator.prototype.generateOneTimePrincipalPlan = function(inputData) {
+    var loanAmount = parseFloat(inputData.loanAmount) || 0;
+    var plan = this.createBasePlan(inputData);
+    plan.repayType = REPAY_TYPE.PRINCIPAL;
+    plan.expectRepayCapital = AmountUtil.round(loanAmount);
+    plan.expectRepayAmount = plan.expectRepayCapital;
+    plan.remianLimit = plan.expectRepayCapital;
+    plan.planNo = this.generatePlanNo(inputData.provideLoanCode, plan.repayType, plan.repayDate);
+    return [plan];
+};
+
+/**
+ * 生成一次性付息计划（包括预扣利息、一次付清、利随本清）
+ */
+RepaymentPlanGenerator.prototype.generateOneTimeInterestPlan = function(inputData) {
+    var loanAmount = parseFloat(inputData.loanAmount) || 0;
+    var cardinaliy = parseInt(inputData.cardinaliy) || 0;
+    var termDays = parseInt(inputData.forwardTerm) || 0;
+    var interestRate = parseFloat(inputData.nowRate) || 0;
+
+    var plan = this.createInterestBasePlan(inputData);
+
+    // 计算总利息
+    var totalInterest = this.calculateInterest(loanAmount, interestRate, termDays, cardinaliy);
+
+    plan.expectRepayInterest = totalInterest;
+    plan.expectRepayAmount = totalInterest;
+    plan.remianLimit = totalInterest;
+    plan.planNo = this.generatePlanNo(inputData.provideLoanCode, plan.repayType, plan.repayDate);
+    return [plan];
+};
+
+/**
+ * 生成分期定额还本计划
+ */
+RepaymentPlanGenerator.prototype.generateFixedAmountPrincipalPlan = function(inputData) {
+    var result = [];
+    var loanAmount = parseFloat(inputData.loanAmount) || 0;
+    var termDays = parseInt(inputData.forwardTerm) || 0;
+    var firstRepayDate = this.parseDate(inputData.firstRepayCustomDate);
+    var loanDate = this.parseDate(inputData.loanDate);
+    var repayInterval = inputData.repayInterval;
+
+    // 计算总期数
+    var totalPeriods = this.calculateTotalPeriods(termDays, repayInterval);
+
+    // 四舍五入计算每期本金
+    var principalPerPeriod = AmountUtil.round(loanAmount / totalPeriods);
+    var totalPrincipalPaid = 0;
+    var remainingPrincipal = loanAmount;
+
+    // 生成前N-1期
+    for (var i = 0; i < totalPeriods - 1; i++) {
+        var plan = this.createBasePlan(inputData);
+        plan.repayType = REPAY_TYPE.PRINCIPAL;
+        plan.repayDate = this.calculateNextRepayDate(firstRepayDate, repayInterval, i);
+        plan.expectRepayCapital = principalPerPeriod;
+        plan.expectRepayAmount = principalPerPeriod;
+        plan.remianLimit = principalPerPeriod;
+        plan.remainingPrincipal = remainingPrincipal - principalPerPeriod;
+        plan.planNo = this.generatePlanNo(inputData.provideLoanCode, plan.repayType, plan.repayDate);
+
+        totalPrincipalPaid += principalPerPeriod;
+        remainingPrincipal = plan.remainingPrincipal;
+        result.push(plan);
+    }
+
+    // 生成最后一期，精确计算剩余本金
+    if (totalPeriods > 0) {
+        var lastPlan = this.createBasePlan(inputData);
+        lastPlan.repayType = REPAY_TYPE.PRINCIPAL;
+        lastPlan.repayDate = DateUtil.addDays(loanDate, termDays);
+        lastPlan.expectRepayCapital = AmountUtil.round(loanAmount - totalPrincipalPaid);
+        lastPlan.expectRepayAmount = lastPlan.expectRepayCapital;
+        lastPlan.remianLimit = lastPlan.expectRepayCapital;
+        lastPlan.remainingPrincipal = 0;
+        lastPlan.planNo = this.generatePlanNo(inputData.provideLoanCode, lastPlan.repayType, lastPlan.repayDate);
+        result.push(lastPlan);
+    }
+
+    return result;
+};
+
+/**
+ * 生成等额本金还款计划
+ */
+RepaymentPlanGenerator.prototype.generateEqualPrincipalPlan = function(inputData) {
+    var result = [];
+    var loanAmount = parseFloat(inputData.loanAmount) || 0;
+    var termDays = parseInt(inputData.forwardTerm) || 0;
+    var firstRepayDate = this.parseDate(inputData.firstRepayCustomDate);
+    var loanDate = this.parseDate(inputData.loanDate);
+    var repayInterval = inputData.repayInterval;
+
+    // 计算总期数
+    var totalPeriods = this.calculateTotalPeriods(termDays, repayInterval);
+
+    // 四舍五入计算每期本金
+    var principalPerPeriod = AmountUtil.round(loanAmount / totalPeriods);
+    var totalPrincipalPaid = 0;
+    var remainingPrincipal = loanAmount;
+
+    // 生成前N-1期
+    for (var i = 0; i < totalPeriods - 1; i++) {
+        var plan = this.createBasePlan(inputData);
+        plan.repayType = REPAY_TYPE.PRINCIPAL;
+        plan.repayDate = this.calculateNextRepayDate(firstRepayDate, repayInterval, i);
+        plan.expectRepayCapital = principalPerPeriod;
+        plan.expectRepayAmount = principalPerPeriod;
+        plan.remianLimit = principalPerPeriod;
+        plan.remainingPrincipal = remainingPrincipal - principalPerPeriod;
+        plan.planNo = this.generatePlanNo(inputData.provideLoanCode, plan.repayType, plan.repayDate);
+
+        totalPrincipalPaid += principalPerPeriod;
+        remainingPrincipal = plan.remainingPrincipal;
+        result.push(plan);
+    }
+
+    // 生成最后一期，精确计算剩余本金
+    if (totalPeriods > 0) {
+        var lastPlan = this.createBasePlan(inputData);
+        lastPlan.repayType = REPAY_TYPE.PRINCIPAL;
+        lastPlan.repayDate = DateUtil.addDays(loanDate, termDays);
+        lastPlan.expectRepayCapital = AmountUtil.round(loanAmount - totalPrincipalPaid);
+        lastPlan.expectRepayAmount = lastPlan.expectRepayCapital;
+        lastPlan.remianLimit = lastPlan.expectRepayCapital;
+        lastPlan.remainingPrincipal = 0;
+        lastPlan.planNo = this.generatePlanNo(inputData.provideLoanCode, lastPlan.repayType, lastPlan.repayDate);
+        result.push(lastPlan);
+    }
+
+    return result;
+};
+
+/**
+ * 生成等额本息还款计划
+ */
+RepaymentPlanGenerator.prototype.generateEqualInstallmentPlan = function(inputData) {
+    var result = [];
+    var loanAmount = parseFloat(inputData.loanAmount) || 0;
+    var termDays = parseInt(inputData.forwardTerm) || 0;
+    var firstRepayDate = this.parseDate(inputData.firstRepayCustomDate);
+    var loanDate = this.parseDate(inputData.loanDate);
+    var repayInterval = inputData.repayInterval;
+    var interestRate = parseFloat(inputData.nowRate) || 0;
+
+    // 计算总期数
+    var totalPeriods = this.calculateTotalPeriods(termDays, repayInterval);
+
+    // 根据还款周期计算月供
+    var periodsPerYear = this.getPeriodsPerYear(repayInterval);
+    var periodRate = interestRate / 100 / periodsPerYear;
+
+    // 计算每期固定还款金额
+    var periodPayment = AmountUtil.round(loanAmount * periodRate * Math.pow(1 + periodRate, totalPeriods) / (Math.pow(1 + periodRate, totalPeriods) - 1));
+
+    var remainingPrincipal = loanAmount;
+    var totalAmountPaid = 0;
+
+    // 生成前N-1期
+    for (var i = 0; i < totalPeriods - 1; i++) {
+        var plan = this.createBasePlan(inputData);
+        plan.repayType = REPAY_TYPE.PRINCIPAL;
+        plan.repayDate = this.calculateNextRepayDate(firstRepayDate, repayInterval, i);
+
+        // 计算当期利息
+        var currentInterest = AmountUtil.round(remainingPrincipal * periodRate);
+        var currentPrincipal = AmountUtil.round(periodPayment - currentInterest);
+
+        // 还本计划中利息应为0
+        plan.expectRepayInterest = 0;
+        plan.expectRepayCapital = currentPrincipal;
+        plan.expectRepayAmount = currentPrincipal;
+        plan.remianLimit = currentPrincipal;
+        plan.remainingPrincipal = remainingPrincipal - currentPrincipal;
+        plan.planNo = this.generatePlanNo(inputData.provideLoanCode, plan.repayType, plan.repayDate);
+
+        remainingPrincipal = plan.remainingPrincipal;
+        totalAmountPaid += periodPayment;
+        result.push(plan);
+    }
+
+    // 生成最后一期，精确计算剩余金额
+    if (totalPeriods > 0) {
+        var lastPlan = this.createBasePlan(inputData);
+        lastPlan.repayType = REPAY_TYPE.PRINCIPAL;
+        lastPlan.repayDate = DateUtil.addDays(loanDate, termDays);
+
+        // 最后一期利息
+        var lastInterest = AmountUtil.round(remainingPrincipal * periodRate);
+        var lastPrincipal = remainingPrincipal;
+
+        // 还本计划中利息应为0
+        lastPlan.expectRepayInterest = 0;
+        lastPlan.expectRepayCapital = AmountUtil.round(lastPrincipal);
+        lastPlan.expectRepayAmount = AmountUtil.round(lastPrincipal);
+        lastPlan.remianLimit = AmountUtil.round(lastPrincipal);
+        lastPlan.remainingPrincipal = 0;
+        lastPlan.planNo = this.generatePlanNo(inputData.provideLoanCode, lastPlan.repayType, lastPlan.repayDate);
+        result.push(lastPlan);
+    }
+
+    return result;
+};
+
+/**
+ * 生成按期付息计划
+ */
+RepaymentPlanGenerator.prototype.generatePeriodicInterestPlans = function(principalPlans, inputData) {
+    var result = [];
+    var remainingPrincipal = parseFloat(inputData.loanAmount) || 0;
+    var interestRate = parseFloat(inputData.nowRate) || 0;
+    var cardinaliy = parseInt(inputData.cardinaliy) || 0;
+    var payInterestType = inputData.payInterestType;
+    var firstInterestDate = this.parseDate(inputData.firstInterestCustomDate);
+    var loanDate = this.parseDate(inputData.loanDate);
+    var termDays = parseInt(inputData.forwardTerm) || 0;
+    var finalRepayDate = DateUtil.addDays(loanDate, termDays);
+    var repayPrincipalType = inputData.repayPrincipalType;
+    var repayInterval = inputData.repayInterval;
+
+    // 将付息方式映射为还款间隔
+    var interestInterval = this.mapPayInterestTypeToInterval(payInterestType);
+
+    // 计算总期数
+    var totalInterestPeriods = this.calculateTotalPeriods(termDays, interestInterval);
+
+    // 生成前N-1期利息计划
+    for (var i = 0; i < totalInterestPeriods - 1; i++) {
+        var interestDate = this.calculateNextRepayDate(firstInterestDate, interestInterval, i);
+        var interestPlan = this.createInterestBasePlan(inputData);
+        interestPlan.repayDate = interestDate;
+
+        // 查找对应期间的还本计划，计算该期间内的本金还款
+        var principalPayment = 0;
+        var relatedPrincipalPlanNo = '';
+
+        for (var j = 0; j < principalPlans.length; j++) {
+            var principalPlan = principalPlans[j];
+            if (principalPlan.repayDate <= interestDate &&
+                (j === principalPlans.length - 1 || principalPlans[j+1].repayDate > interestDate)) {
+                // 找到当期应还本金
+                principalPayment = principalPlan.expectRepayCapital;
+                relatedPrincipalPlanNo = principalPlan.planNo;
+                break;
+            }
+        }
+
+        var interest = 0;
+
+        // 对于等额本息还款方式，使用特殊的利息计算方法
+        if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.EQUAL_INSTALLMENT) {
+            // 根据还款周期计算期利率
+            var periodsPerYear = this.getPeriodsPerYear(repayInterval);
+            var periodRate = interestRate / 100 / periodsPerYear;
+
+            // 计算当期利息
+            interest = AmountUtil.round(remainingPrincipal * periodRate);
+        } else {
+            // 计算计息天数
+            var startDate = i === 0 ? loanDate : this.calculateNextRepayDate(firstInterestDate, interestInterval, i-1);
+            var endDate = interestDate;
+            var days = DateUtil.daysBetween(startDate, endDate);
+
+            // 如果计息天数为0，尝试使用贷款期限计算
+            if (days <= 0 && i === 0) {
+                // 对于首期，如果计息天数为0，使用整个贷款期限计算
+                days = termDays;
+            }
+
+            // 计算利息
+            interest = this.calculateInterest(remainingPrincipal, interestRate, days, cardinaliy);
+        }
+
+        interestPlan.expectRepayInterest = interest;
+        interestPlan.expectRepayAmount = interest;
+        interestPlan.remianLimit = interest;
+        interestPlan.principalPlanNo = relatedPrincipalPlanNo;
+
+        // 生成计划编号
+        interestPlan.planNo = this.generatePlanNo(inputData.provideLoanCode, interestPlan.repayType, interestPlan.repayDate);
+
+        // 更新剩余本金
+        remainingPrincipal -= principalPayment;
+
+        result.push(interestPlan);
+    }
+
+    // 生成最后一期利息计划
+    if (totalInterestPeriods > 0) {
+        var lastInterestPlan = this.createInterestBasePlan(inputData);
+        lastInterestPlan.repayDate = finalRepayDate;
+
+        var lastInterest = 0;
+
+        // 对于等额本息还款方式，使用特殊的利息计算方法
+        if (repayPrincipalType === REPAY_PRINCIPAL_TYPE.EQUAL_INSTALLMENT) {
+            // 根据还款周期计算期利率
+            var periodsPerYear = this.getPeriodsPerYear(repayInterval);
+            var periodRate = interestRate / 100 / periodsPerYear;
+
+            // 计算当期利息
+            lastInterest = AmountUtil.round(remainingPrincipal * periodRate);
+        } else {
+            // 计算最后一期利息
+            var lastStartDate = this.calculateNextRepayDate(firstInterestDate, interestInterval, totalInterestPeriods - 2);
+            var lastDays = DateUtil.daysBetween(lastStartDate, finalRepayDate);
+            lastInterest = this.calculateInterest(remainingPrincipal, interestRate, lastDays, cardinaliy);
+        }
+
+        lastInterestPlan.expectRepayInterest = lastInterest;
+        lastInterestPlan.expectRepayAmount = lastInterest;
+        lastInterestPlan.remianLimit = lastInterest;
+
+        // 生成计划编号
+        lastInterestPlan.planNo = this.generatePlanNo(inputData.provideLoanCode, lastInterestPlan.repayType, lastInterestPlan.repayDate);
+
+        // 查找最后还本计划
+        for (var j = 0; j < principalPlans.length; j++) {
+            var principalPlan = principalPlans[j];
+            if (principalPlan.repayDate.getTime() === finalRepayDate.getTime()) {
+                lastInterestPlan.principalPlanNo = principalPlan.planNo;
+                break;
+            }
+        }
+
+        result.push(lastInterestPlan);
+    }
+
+    return result;
+};
+
+/**
+ * 计算总期数
+ */
+RepaymentPlanGenerator.prototype.calculateTotalPeriods = function(termDays, repayInterval) {
+    var daysPerPeriod = 0;
+
+    switch (repayInterval) {
+        case REPAY_INTERVAL_TYPE.MONTHLY:
+            daysPerPeriod = 30;
+            break;
+        case REPAY_INTERVAL_TYPE.QUARTERLY:
+            daysPerPeriod = 90;
+            break;
+        case REPAY_INTERVAL_TYPE.SEMI_ANNUAL:
+            daysPerPeriod = 180;
+            break;
+        case REPAY_INTERVAL_TYPE.ANNUAL:
+            daysPerPeriod = 360;
+            break;
+        default:
+            daysPerPeriod = 30;
+    }
+
+    return Math.ceil(termDays / daysPerPeriod);
+};
+
+/**
+ * 获取一年的期数
+ */
+RepaymentPlanGenerator.prototype.getPeriodsPerYear = function(repayInterval) {
+    switch (repayInterval) {
+        case REPAY_INTERVAL_TYPE.MONTHLY:
+            return 12;
+        case REPAY_INTERVAL_TYPE.QUARTERLY:
+            return 4;
+        case REPAY_INTERVAL_TYPE.SEMI_ANNUAL:
+            return 2;
+        case REPAY_INTERVAL_TYPE.ANNUAL:
+            return 1;
+        default:
+            return 12;
+    }
+};
+
+/**
+ * 创建基础还款计划对象
+ */
+RepaymentPlanGenerator.prototype.createBasePlan = function(inputData) {
+    var repayDate = null;
+    if (inputData.firstRepayCustomDate) {
+        var timestamp;
+        if (typeof inputData.firstRepayCustomDate === 'object' && inputData.firstRepayCustomDate.getTime) {
+            timestamp = inputData.firstRepayCustomDate.getTime();
+        } else {
+            timestamp = inputData.firstRepayCustomDate;
+        }
+        repayDate = new Date(timestamp);
+    }
+
+    var basePlan = {
+        payInterestType: inputData.payInterestType || '',
+        repayPrincipalType: inputData.repayPrincipalType || '',
+        planNo: '',
+        repayType: '',
+        repayDate: repayDate,
+        repayWay: inputData.repayWay || '',
+        expectRepayCapital: 0,
+        expectRepayInterest: 0,
+        expectRepayAmount: 0,
+        remianLimit: 0,
+        gatherAccountId: inputData.gatherAccountId || '',
+        gatherBankNumber: inputData.gatherBankNumber || '',
+        gatherBankNumberName: inputData.gatherBankNumberName || '',
+        remark: SYSTEM_GENERATED_REMARK,
+        remainingPrincipal: 0
+    };
+    return basePlan;
+};
+
+/**
+ * 创建基础还息计划对象
+ */
+RepaymentPlanGenerator.prototype.createInterestBasePlan = function(inputData) {
+    var repayDate = null;
+    if (inputData.firstInterestCustomDate) {
+        var timestamp;
+        if (typeof inputData.firstInterestCustomDate === 'object' && inputData.firstInterestCustomDate.getTime) {
+            timestamp = inputData.firstInterestCustomDate.getTime();
+        } else {
+            timestamp = inputData.firstInterestCustomDate;
+        }
+        repayDate = new Date(timestamp);
+    }
+
+    var basePlan = {
+        payInterestType: inputData.payInterestType || '',
+        repayPrincipalType: inputData.repayPrincipalType || '',
+        planNo: '',
+        repayType: REPAY_TYPE.INTEREST,
+        repayDate: repayDate,
+        repayWay: inputData.repayWay || '',
+        expectRepayCapital: 0,
+        expectRepayInterest: 0,
+        expectRepayAmount: 0,
+        remianLimit: 0,
+        gatherAccountId: inputData.reinterestGatherAccountId || inputData.gatherAccountId || '',
+        gatherBankNumber: inputData.reinterestGatherBankNumber || inputData.gatherBankNumber || '',
+        gatherBankNumberName: inputData.reinterestGatherBankNumberName || inputData.gatherBankNumberName || '',
+        remark: SYSTEM_GENERATED_REMARK,
+        principalPlanNo: ''
+    };
+    return basePlan;
+};
+
+/**
+ * 解析日期，如果为空或无效则返回null
+ */
+RepaymentPlanGenerator.prototype.parseDate = function(dateValue) {
+    if (!dateValue) return null;
+
+    var timestamp;
+    if (typeof dateValue === 'object' && dateValue.getTime) {
+        timestamp = dateValue.getTime();
+    } else {
+        timestamp = dateValue;
+    }
+
+    var date = new Date(timestamp);
+
+    if (date.getTime() === new Date(0).getTime()) {
+        return null;
+    }
+    return date;
+};
+
+/**
+ * 计算下一还款日期
+ */
+RepaymentPlanGenerator.prototype.calculateNextRepayDate = function(startDate, interval, period) {
+    if (!startDate || DateUtil.isInvalidDate(startDate)) {
+        return null;
+    }
+    var result = new Date(startDate);
+
+    switch (interval) {
+        case REPAY_INTERVAL_TYPE.MONTHLY:
+            result = DateUtil.addMonths(startDate, period);
+            break;
+        case REPAY_INTERVAL_TYPE.QUARTERLY:
+            result = DateUtil.addMonths(startDate, period * 3);
+            break;
+        case REPAY_INTERVAL_TYPE.SEMI_ANNUAL:
+            result = DateUtil.addMonths(startDate, period * 6);
+            break;
+        case REPAY_INTERVAL_TYPE.ANNUAL:
+            result = DateUtil.addMonths(startDate, period * 12);
+            break;
+        default:
+            result = DateUtil.addMonths(startDate, period);
+    }
+
+    return DateUtil.adjustToValidDate(result);
+};
+
+/**
+ * 生成还款计划编号
+ */
+RepaymentPlanGenerator.prototype.generatePlanNo = function(provideLoanCode, repayType, repayDate) {
+    var dateStr = '';
+    if (repayDate && !DateUtil.isInvalidDate(repayDate)) {
+        dateStr = DateUtil.formatDate(repayDate, 'yyyyMMdd');
+    }
+    return provideLoanCode + repayType + dateStr;
+};
+
+/**
+ * 将付息方式映射为还款间隔
+ */
+RepaymentPlanGenerator.prototype.mapPayInterestTypeToInterval = function(payInterestType) {
+    switch(payInterestType) {
+        case PAY_INTEREST_TYPE.MONTHLY:
+            return REPAY_INTERVAL_TYPE.MONTHLY;
+        case PAY_INTEREST_TYPE.QUARTERLY:
+            return REPAY_INTERVAL_TYPE.QUARTERLY;
+        case PAY_INTEREST_TYPE.SEMI_ANNUAL:
+            return REPAY_INTERVAL_TYPE.SEMI_ANNUAL;
+        case PAY_INTEREST_TYPE.ANNUAL:
+            return REPAY_INTERVAL_TYPE.ANNUAL;
+        default:
+            return REPAY_INTERVAL_TYPE.MONTHLY;
+    }
+};
+
+/**
+ * 计算利息
+ */
+RepaymentPlanGenerator.prototype.calculateInterest = function(principal, annualRate, days, cardinaliy) {
+    if (!principal || !annualRate || !days || !cardinaliy) {
+        return 0;
+    }
+    return AmountUtil.round((principal * days * annualRate) / 100 / cardinaliy);
+};
+
+/**
+ * 等额本息计算工具
+ */
+var EqualInstallmentCalculator = {
+    /**
+     * 计算等额本息每期还款额
+     */
+    calculatePeriodPayment: function(principal, annualRate, periods, interval) {
+        var periodsPerYear = 12;
+        switch(interval) {
+            case REPAY_INTERVAL_TYPE.MONTHLY:
+                periodsPerYear = 12;
+                break;
+            case REPAY_INTERVAL_TYPE.QUARTERLY:
+                periodsPerYear = 4;
+                break;
+            case REPAY_INTERVAL_TYPE.SEMI_ANNUAL:
+                periodsPerYear = 2;
+                break;
+            case REPAY_INTERVAL_TYPE.ANNUAL:
+                periodsPerYear = 1;
+                break;
+        }
+
+        var periodRate = annualRate / 100 / periodsPerYear;
+        var payment = principal * periodRate * Math.pow(1 + periodRate, periods) / (Math.pow(1 + periodRate, periods) - 1);
+        return AmountUtil.round(payment);
+    }
+};
+
+/**
+ * 主函数 - 生成完整还款计划
+ */
+function main(inputData) {
+    var generator = new RepaymentPlanGenerator();
+    var plans = generator.generatePlans(inputData);
+    return JSON.stringify(plans);
+}

@@ -1,0 +1,89 @@
+- [zfs-public] - [2026-06-26 17:17:34.280] - [d58c857e8b2a491f84fe97f059b932f0.219.17824654542678967] - [http-nio-28083-exec-47] ERROR [cn.ztessc.common.exception.ZteExceptionHandler:75] - {
+        "reqClient":"Windows (Chrome-149.0.0.0 )",
+        "reqMethod":"POST",
+        "reqParams":"{\"requestParam\":\"oldPwd=Md43C84ms2rPW4vDhjBxig%3D%3D&newPwd=5OHQByU1Oc%2F6rQUipB9Rsw%3D%3D&confirmNewPwd=5OHQByU1Oc%2F6rQUipB9Rsw%3D%3D\"}",
+        "groupId":"ba2ad44f9aba2ad54fa43139322e0000",
+        "serverName":"zfs-public",
+        "respResult":"{\"msg\":\"[1511F000-3002]F000-3002\",\"code\":500,\"bizCode\":\"1511F000-3002\",\"type\":\"ERROR\"}",
+        "reqTime":"2026-06-26 17:17:34",
+        "message":"",
+        "result":"失败",
+        "threadId":"http-nio-28083-exec-47-1048906",
+        "reqIp":"220.168.241.34",
+        "envName":"DEV",
+        "reqUserAccount":"00010212/刘子赫",
+        "reqSource":"zfs-base",
+        "reqUrl":"/useraccount/updatePwd"
+}
+ - cn.ztessc.common.exception.ZteException: F000-3002
+        at cn.ztessc.service.permission.SysUserAccountService.decrypt(SysUserAccountService.java:5459)
+        at cn.ztessc.service.permission.SysUserAccountService.updatePwd(SysUserAccountService.java:1666)
+        at cn.ztessc.service.permission.SysUserAccountService$$EnhancerBySpringCGLIB$$80646b3.updatePwd(<generated>)
+        at cn.ztessc.controller.permission.SysUserAccountController.updatePwd(SysUserAccountController.java)
+
+
+    OK("F000-0000", "ok"),
+
+    /**
+     * 场景对应的密钥未在配置中心配置.
+     * <p>触发点：业务方传入的 scenario 在 {@code zfs.sm2.security.scenarios} 中找不到。</p>
+     */
+    KEY_NOT_FOUND("F000-1001", "scenario key not found"),
+
+    /**
+     * 国密 SM2 解密失败.
+     * <p>触发点：密文损坏、不是用配对公钥加密、私钥不匹配等。</p>
+     */
+    DECRYPT_FAIL("F000-2001", "sm2 decrypt failed"),
+
+    /**
+     * 时间戳被篡改：嵌入时间戳与请求参数时间戳不一致.
+     */
+    TIMESTAMP_TAMPERED("F000-3001", "timestamp tampered"),
+
+    /**
+     * 时间戳过期：偏差超过当前生效的有效窗口.
+     */
+    TIMESTAMP_EXPIRED("F000-3002", "timestamp expired"),
+
+    /**
+     * 随机数已失效：在一次性凭证存储中不存在（已被消费或已 TTL 过期）.
+     */
+    NONCE_EXPIRED("F000-4001", "nonce expired or already consumed"),
+
+    /**
+     * 随机数与服务端记录场景不一致：检测到跨场景串用.
+     */
+    NONCE_MISMATCH("F000-4002", "nonce scenario mismatch");
+
+
+
+
+[arthas@739443]$ watch cn.ztessc.service.bill.LdgFmsBillAccountService externalQueryPage '{params, returnObj}' -s -x 3
+Press Q or Ctrl+C to abort.
+Affect(class count: 2 , method count: 2) cost in 554 ms, listenerId: 1
+method=cn.ztessc.service.bill.LdgFmsBillAccountService.externalQueryPage location=AtExit
+ts=2026-07-10 16:35:12.941; [cost=6.136775ms] result=@ArrayList[
+    @Object[][
+        @Query[
+            @String[billTypeCode]:@String[001],
+            @String[leId]:@String[82135b6774e3bd571dd5b1b7b2ae040f],
+            @String[sobCode]:@String[HUASHI001],
+            @String[useLeCode]:@String[HXF120001],
+            @String[oriBillCode]:@String[CJRCS071009877],
+            @String[limit]:@Integer[10],
+            @String[subticketEnd]:@String[7100000],
+            @String[subticketStart]:@String[100001],
+            @String[ticketSystem]:@String[new],
+            @String[externalPostalOrderCode]:@String[CJRCS071009877],
+            @String[supplyFinanceType]:@String[0^1^2^3^4^6],
+            @String[financeType]:@String[0^1^2^3^4^6],
+            @String[page]:@Integer[1],
+            @String[leCode]:@String[HX01],
+            @String[dataSource]:@String[1],
+            @String[billUseLeId]:@String[df668b4d5af9ee920205b1b7b2ae1d9e],
+        ],
+    ],
+
+
+

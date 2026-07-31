@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>应收信用证 · 交单登记 / 到账登记 · 数据流动态图（3D Force Graph）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", "PingFang SC", sans-serif; }
+        #graph { width: 100vw; height: 100vh; }
+        .legend {
+            position: absolute; top: 16px; left: 16px; z-index: 10;
+            background: rgba(20, 30, 50, 0.85); color: #fff;
+            padding: 14px 18px; border-radius: 10px;
+            font-size: 13px; line-height: 1.7;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            max-width: 280px;
+        }
+        .legend h2 { font-size: 15px; margin-bottom: 8px; color: #5fd3ff; }
+        .legend .item { display: flex; align-items: center; margin: 4px 0; }
+        .legend .dot {
+            width: 14px; height: 14px; border-radius: 50%; margin-right: 8px;
+            box-shadow: 0 0 6px currentColor;
+        }
+        .controls {
+            position: absolute; top: 16px; right: 16px; z-index: 10;
+            background: rgba(20, 30, 50, 0.85); color: #fff;
+            padding: 14px 18px; border-radius: 10px;
+            font-size: 13px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .controls button {
+            margin: 4px 4px 0 0; padding: 6px 12px;
+            background: linear-gradient(135deg, #5fd3ff, #2a7fff);
+            border: none; color: #fff; border-radius: 6px;
+            cursor: pointer; font-size: 12px;
+            transition: all 0.2s;
+        }
+        .controls button:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(95,211,255,0.4); }
+        .controls button.alt { background: linear-gradient(135deg, #ffb86c, #ff6b6b); }
+        .controls button.alt2 { background: linear-gradient(135deg, #b86cff, #6c4aff); }
+        .tooltip {
+            position: absolute; z-index: 11; pointer-events: none;
+            background: rgba(10, 15, 30, 0.95); color: #fff;
+            padding: 10px 14px; border-radius: 8px;
+            font-size: 12px; line-height: 1.6;
+            max-width: 360px;
+            border: 1px solid rgba(95,211,255,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .tooltip h3 { color: #5fd3ff; margin-bottom: 6px; font-size: 13px; }
+        .tooltip .field { color: #ffb86c; }
+        .tooltip .desc { color: #aaa; font-size: 11px; margin-top: 4px; }
+        .hint {
+            position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+            background: rgba(20, 30, 50, 0.85); color: #aac;
+            padding: 8px 18px; border-radius: 20px; font-size: 12px;
+            backdrop-filter: blur(6px);
+        }
+    </style>
+</head>
+<body>
+    <div id="graph"></div>
+
+    <div class="legend">
+        <h2>节点类型图例</h2>
+        <div class="item"><div class="dot" style="background:#ffb86c;color:#ffb86c"></div>用户入口（HTTP 请求）</div>
+        <div class="item"><div class="dot" style="background:#5fd3ff;color:#5fd3ff"></div>Controller 层</div>
+        <div class="item"><div class="dot" style="background:#50fa7b;color:#50fa7b"></div>Service 层 / 业务方法</div>
+        <div class="item"><div class="dot" style="background:#ff79c6;color:#ff79c6"></div>数据表（Table）</div>
+        <div class="item"><div class="dot" style="background:#bd93f9;color:#bd93f9"></div>字段组 / 字段（Field）</div>
+        <div class="item"><div class="dot" style="background:#f92672;color:#f92672"></div>外部服务（Redis/锁）</div>
+        <div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.15);">
+            <div style="margin:3px 0;"><span style="color:#50fa7b">●━绿线</span> 第1步交单登记</div>
+            <div style="margin:3px 0;"><span style="color:#ffb86c">●━橙线</span> 第2步到账登记</div>
+            <div style="margin:3px 0;"><span style="color:#8be9fd">●━蓝线</span> 结构层级关系</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div style="margin-bottom:6px; color:#5fd3ff; font-weight:bold;">视图控制</div>
+        <button onclick="focusStep(1)">高亮：交单登记</button>
+        <button class="alt" onclick="focusStep(2)">高亮：到账登记</button>
+        <button class="alt2" onclick="resetView()">重置视图</button>
+        <button class="alt2" onclick="zoomToFit()">缩放至适应</button>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+    <div class="hint">鼠标拖拽旋转 · 滚轮缩放 · 悬停节点查看详情</div>
+
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <script>
+    // ===================== 节点颜色与类型 =====================
+    const COLORS = {
+        entry:      '#ffb86c',  // 用户入口
+        controller: '#5fd3ff',  // Controller
+        service:    '#50fa7b',  // Service
+        table:      '#ff79c6',  // 数据表
+        field:      '#bd93f9',  // 字段
+        external:   '#f92672'   // 外部服务
+    };
+
+    const LINK_COLORS = {
+        step1:  '#50fa7b',   // 交单登记
+        step2:  '#ffb86c',   // 到账登记
+        struct: '#8be9fd'    // 结构关系
+    };
+
+    // ===================== 图数据 =====================
+    const nodes = [
+        // ============ 入口 ============
+        { id: 'entry1', label: 'POST /fmsrclpresentregister\n（交单登记）', type: 'entry', step: 1, size: 18,
+          desc: '用户提交交单登记请求，包含交单银行、单据号、交单金额、装运信息等' },
+        { id: 'entry2', label: 'PUT /fmsrclpresentregister/fmsrclaccountregister\n（到账登记）', type: 'entry', step: 2, size: 18,
+          desc: '用户提交到账登记请求，包含到账明细、收款信息、beOver（是否完结）等' },
+
+        // ============ Controller 层 ============
+        { id: 'ctrl', label: 'FmsRclPresentRegister\nController', type: 'controller', size: 16,
+          desc: '@RestController @RequestMapping("fmsrclpresentregister")\n入口控制器，分发 save 与 saveAccount 两个接口' },
+        { id: 'ctrl_save', label: 'save()\n@PostMapping', type: 'controller', step: 1, size: 12,
+          desc: '@SysLog("保存-应收信用证交单登记表")\n接收 FmsRclPresentRegisterDTO，调用 service.save' },
+        { id: 'ctrl_acc', label: 'saveAccount()\n@PutMapping("fmsrclaccountregister")', type: 'controller', step: 2, size: 12,
+          desc: '@SysLog("保存-应收信用证到账登记")\n接收 FmsRclPresentRegisterDTO，调用 service.addAccount' },
+
+        // ============ Service 层 ============
+        { id: 'svc', label: 'FmsRclPresentRegister\nService', type: 'service', size: 16,
+          desc: '@Service @Transactional\n核心业务服务，处理交单登记与到账登记' },
+        { id: 'svc_save', label: 'save(dto)\n交单登记核心方法', type: 'service', step: 1, size: 14,
+          desc: '1. doValiData 校验单据号唯一/金额不超开证金额\n2. 设置 status=6 出库\n3. 保存交单主表\n4. 更新主信用证状态=6\n5. 保存附件(busType=RCL_PRESENT)' },
+        { id: 'svc_acc', label: 'addAccount(dto)\n到账登记核心方法', type: 'service', step: 2, size: 14,
+          desc: '1. Redisson 分布式锁\n2. 校验收款金额不超交单金额\n3. saveRegisterChild 处理子表\n4. beOver=0 时 status=3 到账，推进主信用证状态\n5. updateAttachment 更新到账附件\n6. setData 回写到账字段' },
+        { id: 'svc_setLetter', label: 'setLetterStatus()\n状态推进', type: 'service', step: 2, size: 11,
+          desc: '查询证下所有交单，若全部到账且金额累加=开证金额，\n则把主信用证 status 推进到 3（到账）' },
+        { id: 'svc_setData', label: 'setData()\n到账字段回写', type: 'service', step: 2, size: 11,
+          desc: '把 9 个到账字段从 dto 回写到交单主表：\nreceiveAccount/Mode/Type/Date/Amount\naccountFee/operator/operatorDate/accountRemark' },
+
+        // ============ 子 Service ============
+        { id: 'svc_letter', label: 'FmsReceiveCreditLetter\nService', type: 'service', size: 12,
+          desc: '应收信用证主表服务\n负责主信用证的查询与状态更新' },
+        { id: 'svc_child', label: 'FmsRclPresentRegister\nChildService', type: 'service', size: 12,
+          desc: '到账明细子表服务\nsaveRegisterChild 处理到账明细、流水关联、流水标签\nlogicDeleteByRegister 逻辑删除子表' },
+        { id: 'svc_attach', label: 'FmsAttachment\nService', type: 'service', size: 11,
+          desc: '附件服务\nsaveAttachment 新增附件\nupdateAttachment 先删后增\ndeleteByBusIdAndType 按业务删除' },
+        { id: 'svc_associa', label: 'FmsRegisterTrans\nAssociaService', type: 'service', step: 2, size: 11,
+          desc: '流水关联服务\nreleaseRelationFlowByChildIdList 释放关联流水' },
+        { id: 'svc_lable', label: 'FmsTransactionDetails\nLableService', type: 'service', step: 2, size: 11,
+          desc: '流水标签服务\nreleaseFlowLableListByBusDetailsId 释放流水标签' },
+
+        // ============ 外部 ============
+        { id: 'redis', label: 'Redis 分布式锁\nRECEIVE_REGISTER_{id}', type: 'external', step: 2, size: 11,
+          desc: '到账登记时加锁\n防止同一交单被并发重复登记\n锁 key: FmsConstants.REDIS_RECEIVE_REGISTER_KEY + id' },
+
+        // ============ 数据表 ============
+        { id: 'tbl_letter', label: 'FMS_RECEIVE_\nCREDIT_LETTER\n应收信用证主表', type: 'table', size: 18,
+          desc: '应收信用证主表（台账）\n存储信用证基本信息与状态' },
+        { id: 'tbl_register', label: 'FMS_RCL_PRESENT_\nREGISTER\n交单登记主表', type: 'table', size: 18,
+          desc: '应收信用证交单登记表\n一次交单一行，存储交单银行、金额、装运信息等' },
+        { id: 'tbl_child', label: 'FMS_RCL_PRESENT_\nREGISTER_CHILD\n到账明细子表', type: 'table', size: 16,
+          desc: '应收到账/应付结算登记表\n每次到账一行，data_type=1 表示应收' },
+        { id: 'tbl_associa', label: 'FMS_REGISTER_\nTRANS_ASSOCIA\n流水关联表', type: 'table', size: 14,
+          desc: '资金信用证结算交易关联表\n到账登记时关联的资金流水' },
+        { id: 'tbl_lable', label: 'FMS_TRANSACTION_\nDETAILS_LABLE\n流水标签表', type: 'table', size: 14,
+          desc: '交易明细业务标签表\n标识流水被该业务占用' },
+        { id: 'tbl_attach', label: 'FMS_ATTACHMENT\n附件表', type: 'table', size: 14,
+          desc: '公共附件表\n按 bus_type 区分：RCL_PRESENT 交单附件 / RCL_ACCOUNT 到账附件' },
+
+        // ============ 第 1 步：交单主表写入字段 ============
+        { id: 'f_register_s1', label: 'status = 6\n（出库）', type: 'field', step: 1,
+          desc: '代码强制设置：entity.setStatus(FmsConstants.letterStatus.LETTER_6.getCode())' },
+        { id: 'f_register_core', label: 'docNo / presentBank / presentDate\npresentAmount / currency', type: 'field', step: 1,
+          desc: '从 DTO 直接映射：单据号、交单银行、交单日期、交单金额、币种' },
+        { id: 'f_register_shipment', label: 'shipmentStartDate / expectReceiveDate\npaymentDate / forwardDueDate\ndeliveryDate / logisticsNo / goodsRemark', type: 'field', step: 1,
+          desc: '装运与日期信息：装运开始日、预计收款日、付款日期、远期承兑到期日、寄单日期、物流号、货物描述' },
+        { id: 'f_register_meta', label: 'id / rclId / groupId\ncreateBy / createDate\nenabledFlag=0 / validityFlag=0', type: 'field', step: 1,
+          desc: '主键(uuid)、关联信用证、集团、审计字段。EntityUtils.setWho 自动填充' },
+
+        // ============ 第 1 步：主信用证状态变更 ============
+        { id: 'f_letter_s1', label: 'status: 原 → 6\n（出库）', type: 'field', step: 1,
+          desc: '强制更新：one.setStatus(LETTER_6)\n记录 lastUpdateBy / lastUpdateDate' },
+
+        // ============ 第 2 步：交单主表更新字段 ============
+        { id: 'f_register_s2', label: 'status: 6 → 3\n（出库→到账）', type: 'field', step: 2,
+          desc: 'beOver=0 时触发：\nregisterEntity.setStatus(FmsConstants.letterStatus.LETTER_3.getCode())' },
+        { id: 'f_register_beover', label: 'beOver: null → 0\n（已完结=是）', type: 'field', step: 2,
+          desc: 'setBeOver(dto.getBeOver())\nbeOver=0 表示已完结' },
+        { id: 'f_register_receive', label: 'receiveAccount/Mode/Type\nreceiveDate/Amount\naccountFee', type: 'field', step: 2,
+          desc: 'setData() 回写：收款账号、方式、类型、日期、金额、手续费' },
+        { id: 'f_register_operator', label: 'operator / operatorDate\naccountRemark', type: 'field', step: 2,
+          desc: 'setData() 回写：经办人、经办日期、到账备注' },
+
+        // ============ 第 2 步：子表字段 ============
+        { id: 'f_child_core', label: 'registerId / rclId\ndataType=1\nreceiveAmount / accountFee', type: 'field', step: 2,
+          desc: '到账明细核心字段：关联交单ID、信用证ID、应收类型、收款金额、手续费' },
+        { id: 'f_child_recv', label: 'receiveMode / receiveDate\npresentBank / receiveAccount\ncurrencyCode / boeAbstract', type: 'field', step: 2,
+          desc: '收款明细：方式、日期、银行、账号、币种、备注' },
+
+        // ============ 第 2 步：流水关联字段 ============
+        { id: 'f_associa', label: 'rclId / registerId / childId\nfmsBusinessNo / transactionNo', type: 'field', step: 2,
+          desc: '流水关联：信用证ID、交单ID、子表ID、资金流水号、交易流水号' },
+
+        // ============ 第 2 步：流水标签字段 ============
+        { id: 'f_lable', label: 'fmsBusinessNo / busId(=rclId)\nbusNo(=letterNumber)\nbusDetailsId(=childId)\nlableType=010', type: 'field', step: 2,
+          desc: '流水标签：流水号、业务ID（信用证ID）、业务编号、业务明细（子表ID）\nlableType=010 表示应收信用证到账（FLOW_BUSINESS_LABEL_010）' },
+
+        // ============ 主信用证第 2 步状态推进 ============
+        { id: 'f_letter_s2', label: 'status: 6 → 3\n（出库→到账）', type: 'field', step: 2,
+          desc: 'setLetterStatus() 推进：\n当证下所有交单金额累加=开证金额 且 全部到账时\n主信用证 status 改为 3（到账）' },
+
+        // ============ 附件字段 ============
+        { id: 'f_attach_s1', label: 'busId=register.id\nbusType=RCL_PRESENT', type: 'field', step: 1,
+          desc: '交单附件：业务ID=交单登记ID，业务类型=RCL_PRESENT' },
+        { id: 'f_attach_s2', label: 'busId=register.id\nbusType=RCL_ACCOUNT', type: 'field', step: 2,
+          desc: '到账附件：业务ID=交单登记ID，业务类型=RCL_ACCOUNT\nupdateAttachment 先删后增' }
+    ];
+
+    const links = [
+        // ===== 入口 → Controller =====
+        { source: 'entry1', target: 'ctrl_save', step: 1, type: 'flow' },
+        { source: 'entry2', target: 'ctrl_acc', step: 2, type: 'flow' },
+
+        // ===== Controller 结构 =====
+        { source: 'ctrl', target: 'ctrl_save', type: 'struct' },
+        { source: 'ctrl', target: 'ctrl_acc', type: 'struct' },
+
+        // ===== Controller → Service =====
+        { source: 'ctrl_save', target: 'svc_save', step: 1, type: 'flow' },
+        { source: 'ctrl_acc', target: 'svc_acc', step: 2, type: 'flow' },
+
+        // ===== Service 结构 =====
+        { source: 'svc', target: 'svc_save', type: 'struct' },
+        { source: 'svc', target: 'svc_acc', type: 'struct' },
+        { source: 'svc_acc', target: 'svc_setLetter', type: 'struct', step: 2 },
+        { source: 'svc_acc', target: 'svc_setData', type: 'struct', step: 2 },
+
+        // ===== Service → 子 Service =====
+        { source: 'svc_save', target: 'svc_letter', step: 1, type: 'flow' },
+        { source: 'svc_save', target: 'svc_attach', step: 1, type: 'flow' },
+        { source: 'svc_acc', target: 'svc_letter', step: 2, type: 'flow' },
+        { source: 'svc_acc', target: 'svc_child', step: 2, type: 'flow' },
+        { source: 'svc_acc', target: 'svc_attach', step: 2, type: 'flow' },
+        { source: 'svc_acc', target: 'redis', step: 2, type: 'flow' },
+        { source: 'svc_setLetter', target: 'svc_letter', step: 2, type: 'flow' },
+        { source: 'svc_child', target: 'svc_associa', step: 2, type: 'flow' },
+        { source: 'svc_child', target: 'svc_lable', step: 2, type: 'flow' },
+
+        // ===== Service → 表 =====
+        { source: 'svc_save', target: 'tbl_register', step: 1, type: 'flow' },
+        { source: 'svc_save', target: 'tbl_letter', step: 1, type: 'flow' },
+        { source: 'svc_save', target: 'tbl_attach', step: 1, type: 'flow' },
+
+        { source: 'svc_acc', target: 'tbl_register', step: 2, type: 'flow' },
+        { source: 'svc_acc', target: 'tbl_attach', step: 2, type: 'flow' },
+        { source: 'svc_child', target: 'tbl_child', step: 2, type: 'flow' },
+        { source: 'svc_associa', target: 'tbl_associa', step: 2, type: 'flow' },
+        { source: 'svc_lable', target: 'tbl_lable', step: 2, type: 'flow' },
+        { source: 'svc_setLetter', target: 'tbl_letter', step: 2, type: 'flow' },
+
+        // ===== 表 → 字段（结构关系）=====
+        // 交单主表 - 第1步字段
+        { source: 'tbl_register', target: 'f_register_s1', type: 'struct', step: 1 },
+        { source: 'tbl_register', target: 'f_register_core', type: 'struct', step: 1 },
+        { source: 'tbl_register', target: 'f_register_shipment', type: 'struct', step: 1 },
+        { source: 'tbl_register', target: 'f_register_meta', type: 'struct', step: 1 },
+        // 交单主表 - 第2步字段
+        { source: 'tbl_register', target: 'f_register_s2', type: 'struct', step: 2 },
+        { source: 'tbl_register', target: 'f_register_beover', type: 'struct', step: 2 },
+        { source: 'tbl_register', target: 'f_register_receive', type: 'struct', step: 2 },
+        { source: 'tbl_register', target: 'f_register_operator', type: 'struct', step: 2 },
+
+        // 主信用证表
+        { source: 'tbl_letter', target: 'f_letter_s1', type: 'struct', step: 1 },
+        { source: 'tbl_letter', target: 'f_letter_s2', type: 'struct', step: 2 },
+
+        // 子表
+        { source: 'tbl_child', target: 'f_child_core', type: 'struct', step: 2 },
+        { source: 'tbl_child', target: 'f_child_recv', type: 'struct', step: 2 },
+
+        // 流水关联
+        { source: 'tbl_associa', target: 'f_associa', type: 'struct', step: 2 },
+
+        // 流水标签
+        { source: 'tbl_lable', target: 'f_lable', type: 'struct', step: 2 },
+
+        // 附件
+        { source: 'tbl_attach', target: 'f_attach_s1', type: 'struct', step: 1 },
+        { source: 'tbl_attach', target: 'f_attach_s2', type: 'struct', step: 2 }
+    ];
+
+    // ===================== 构建图 =====================
+    const nodeById = {};
+    nodes.forEach(n => { nodeById[n.id] = n; });
+
+    const graphData = {
+        nodes: nodes.map(n => ({
+            id: n.id,
+            label: n.label,
+            type: n.type,
+            step: n.step,
+            desc: n.desc,
+            val: n.size || 6,
+            color: COLORS[n.type] || '#888'
+        })),
+        links: links.map(l => {
+            const s = nodeById[l.source];
+            const t = nodeById[l.target];
+            let color = LINK_COLORS.struct;
+            if (l.type === 'flow' && l.step === 1) color = LINK_COLORS.step1;
+            else if (l.type === 'flow' && l.step === 2) color = LINK_COLORS.step2;
+            else if (l.step === 1) color = LINK_COLORS.step1;
+            else if (l.step === 2) color = LINK_COLORS.step2;
+            return {
+                source: l.source,
+                target: l.target,
+                color: color,
+                step: l.step,
+                type: l.type,
+                width: l.type === 'flow' ? 2 : 0.6
+            };
+        })
+    };
+
+    const Graph = ForceGraph3D()(document.getElementById('graph'))
+        .graphData(graphData)
+        .backgroundColor('rgba(10, 15, 30, 1)')
+        .nodeLabel(node => `<div style="background:rgba(10,15,30,0.9);color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;border:1px solid ${node.color}">${node.label.replace(/\n/g, '<br/>')}</div>`)
+        .nodeAutoColorBy('type')
+        .nodeColor(node => node.__dimmed ? '#444' : (node.__highlighted ? node.color : node.color))
+        .nodeOpacity(0.95)
+        .nodeVal(node => node.val)
+        .linkColor(link => link.__dimmed ? 'rgba(60,60,60,0.3)' : link.color)
+        .linkWidth(link => link.__dimmed ? 0.2 : (link.width || 1))
+        .linkDirectionalParticles(link => link.type === 'flow' ? 3 : 0)
+        .linkDirectionalParticleWidth(link => link.__dimmed ? 0 : 1.2)
+        .linkDirectionalParticleSpeed(0.006)
+        .linkDirectionalParticleColor(link => link.color)
+        .linkDirectionalArrowLength(link => link.type === 'flow' ? 4 : 0)
+        .linkDirectionalArrowRelPos(1)
+        .d3Force('charge', -380)
+        .d3Force('link', null)
+        .d3Force('link', ForceGraph3D.d3ForceLink().id(d => d.id).distance(l => {
+            if (l.type === 'flow') return 80;
+            if (l.type === 'struct') return 35;
+            return 50;
+        }).strength(0.5))
+        .d3Force('center', ForceGraph3D.d3ForceCenter())
+        .showNavInfo(false);
+
+    // ===================== 悬停高亮 =====================
+    const tooltip = document.getElementById('tooltip');
+    Graph.onNodeHover(node => {
+        if (!node) {
+            tooltip.style.display = 'none';
+            resetHighlight();
+            return;
+        }
+        // 高亮相邻节点
+        const neighborIds = new Set([node.id]);
+        graphData.links.forEach(l => {
+            if (l.source.id === node.id) neighborIds.add(l.target.id);
+            if (l.target.id === node.id) neighborIds.add(l.source.id);
+        });
+        Graph.nodeColor(Graph.graphData().nodes.map(n => {
+            n.__dimmed = !neighborIds.has(n.id);
+            n.__highlighted = n.id === node.id;
+            return n;
+        }));
+        Graph.linkColor(Graph.graphData().links.map(l => {
+            const isConnected = l.source.id === node.id || l.target.id === node.id;
+            l.__dimmed = !isConnected;
+            return l;
+        }));
+        // tooltip
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `
+            <h3>${node.label.replace(/\n/g, '<br/>')}</h3>
+            <div class="desc">${(node.desc || '').replace(/\n/g, '<br/>')}</div>
+            <div class="desc" style="margin-top:6px;">类型: <span class="field">${node.type}</span>
+            ${node.step ? ' · 步骤: <span class="field">' + node.step + '</span>' : ''}</div>
+        `;
+    })
+    .onNodeDragEnd(node => {
+        // 拖动时隐藏 tooltip
+    });
+
+    // 鼠标移动更新 tooltip 位置
+    document.getElementById('graph').addEventListener('mousemove', e => {
+        tooltip.style.left = (e.clientX + 15) + 'px';
+        tooltip.style.top = (e.clientY + 15) + 'px';
+    });
+
+    function resetHighlight() {
+        Graph.nodeColor(Graph.graphData().nodes.map(n => {
+            n.__dimmed = false;
+            n.__highlighted = false;
+            return n;
+        }));
+        Graph.linkColor(Graph.graphData().links.map(l => {
+            l.__dimmed = false;
+            return l;
+        }));
+    }
+
+    // ===================== 控制按钮 =====================
+    function focusStep(step) {
+        Graph.nodeColor(Graph.graphData().nodes.map(n => {
+            n.__dimmed = (n.step && n.step !== step) || (n.type === 'entry' && n.step !== step);
+            // 关键节点（表、controller、service）不全暗
+            if (!n.step && (n.type === 'table' || n.type === 'controller' || n.id === 'svc')) {
+                n.__dimmed = false;
+            }
+            return n;
+        }));
+        Graph.linkColor(Graph.graphData().links.map(l => {
+            l.__dimmed = (l.step && l.step !== step);
+            return l;
+        }));
+    }
+
+    function resetView() {
+        resetHighlight();
+        Graph.cameraPosition({ z: 600 });
+    }
+
+    function zoomToFit() {
+        Graph.zoomToFit(400, 60);
+    }
+
+    // 初始视角
+    setTimeout(() => Graph.zoomToFit(400, 60), 800);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+-- 授信 可结转 查询
+select distinct h.ID, h.CREDIT_CODE, h.LE_ID, h.CREDIT_START_DATE, h.CREDIT_END_DATE, h.STATUS, h.REMAIN_LIMIT
+  from fms_credit_header h
+	inner join fms_credit_breed_child c0	on h.id = c0.CREDIT_ID and c0.CREDIT_BREED_TYPE = '1' and (c0.SUB_CREDIT_BREED_TYPE = '' or c0.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c1	on h.id = c1.CREDIT_ID and c1.CREDIT_BREED_TYPE = '13' and (c1.SUB_CREDIT_BREED_TYPE = '' or c1.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c2 	on h.id = c2.CREDIT_ID and c2.CREDIT_BREED_TYPE = '14' and (c2.SUB_CREDIT_BREED_TYPE = '' or c2.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c3	on h.id = c3.CREDIT_ID and c3.CREDIT_BREED_TYPE = '2' and (c3.SUB_CREDIT_BREED_TYPE = '' or c3.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c4	on h.id = c4.CREDIT_ID and c4.CREDIT_BREED_TYPE = '3' and (c4.SUB_CREDIT_BREED_TYPE = '' or c4.SUB_CREDIT_BREED_TYPE is null)
+  where h.VALIDITY_FLAG = '0'
+	and h.ENABLED_FLAG = '0'
+	and h.STATUS in ('1', '0')
+	and h.id <> 'd25dcf05-154c-41b2-ac0e-90e2978bcbba'
+	and h.GROUP_CREDIT_FLAG = 'N'
+	and h.LE_ID = '8f47fd190ef5d0952e81b1b7b2ae34f9'
+	and h.BANK_ID = 'GP056735'
+	and h.GROUP_ID = 'af4ce58b58c721b9dcde3137322e0004'
+	and h.CURRENCY_CODE = 'CNY'
+	and h.CREDIT_START_DATE <= TIMESTAMP '2026-12-30 00:00:00.000'
+	and h.CREDIT_END_DATE >= TIMESTAMP '2024-02-05 00:00:00.000'
+	and h.REMAIN_LIMIT >= 52874509.22
+union all
+select distinct h.ID, h.CREDIT_CODE, h.LE_ID, CREDIT_START_DATE, h.CREDIT_END_DATE, h.STATUS, c.AVAILABLE_LIMIT as REMAIN_LIMIT
+  from fms_credit_header h
+	left join fms_credit_allocation a on h.ID = a.CREDIT_ID
+	left join FMS_CREDIT_ALLOCATION_CHILD c on a.ID = c.CREDIT_ALLOCATION_ID
+	inner join fms_credit_breed_child c0	on h.id = c0.CREDIT_ID		and c0.CREDIT_BREED_TYPE = '1'		and (c0.SUB_CREDIT_BREED_TYPE = ''			or c0.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c1	on h.id = c1.CREDIT_ID		and c1.CREDIT_BREED_TYPE = '13'		and (c1.SUB_CREDIT_BREED_TYPE = ''			or c1.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c2	on h.id = c2.CREDIT_ID		and c2.CREDIT_BREED_TYPE = '14'		and (c2.SUB_CREDIT_BREED_TYPE = ''			or c2.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c3	on h.id = c3.CREDIT_ID		and c3.CREDIT_BREED_TYPE = '2'		and (c3.SUB_CREDIT_BREED_TYPE = ''			or c3.SUB_CREDIT_BREED_TYPE is null)
+	inner join fms_credit_breed_child c4	on h.id = c4.CREDIT_ID		and c4.CREDIT_BREED_TYPE = '3'		and (c4.SUB_CREDIT_BREED_TYPE = ''			or c4.SUB_CREDIT_BREED_TYPE is null)
+  where h.VALIDITY_FLAG = '0'
+    and h.ENABLED_FLAG = '0'
+    and h.STATUS in ('1', '0')
+    and h.id <> 'd25dcf05-154c-41b2-ac0e-90e2978bcbba'
+	and h.GROUP_CREDIT_FLAG = 'N'
+	and a.LE_ID = '8f47fd190ef5d0952e81b1b7b2ae34f9'
+	and h.BANK_ID = 'GP056735'
+	and h.GROUP_ID = 'af4ce58b58c721b9dcde3137322e0004'
+	and h.CURRENCY_CODE = 'CNY'
+	and h.CREDIT_START_DATE <= TIMESTAMP '2026-12-30 00:00:00.000'
+	and h.CREDIT_END_DATE >= TIMESTAMP '2024-02-05 00:00:00.000'
+	and c.AVAILABLE_LIMIT >= 52874509.22
+limit 20
+
+
+授信A
+    1		20000000.00     20000000.00
+    13		0.00            20000000.00
+    14		0.00            20000000.00
+    2		0.00            20000000.00
+    3		32874509.22     140000000.00
+授信B
+    3		0.00            280000000.00
+    1		0.00            20000000.00
+
+
+
+
+AHJK-IK2602053330： 凤汉雄充电桩电卡充值500元
+AHJK-IK2602053306： (徐杰）公用充电桩个人缴费
+
+
+流水
+
+oth: 凤汉雄/6214855472268529
+  fms_business_no: 4709194f807dfc6e098917950923d785e10157a1c0cae3b3681c4e3793e566e1
+  transaction_id: 2667c2b65ed4cbdf3f5731302e32634a
+  transaction_no: 201558358311_0001
+  transaction_date: 2026-02-02 15:50:09
+
+oth: 徐杰/6214830922351472
+  fms_business_no: 9ff15aea0e29dddd24491c2f7262a52fc4c2d854a429b8a2cc24592fac21d2db
+  transaction_id: 082848b894c96797a6cf31302e32778f
+  transaction_no: 201569135770_0001
+  transaction_date: 2026-02-03 14:34:33
+
+回单：
+0001_201558358311：
+    id： 082848b8af1819b4d47831302e324fa6
+    payer: 凤汉雄/6214855472268529
+    batch_number_sys: 2667c2b65ed4cbdf3f5731302e32634a
+0001_201569135770：
+    id： 082848b8af1551bca03d31302e324bd7
+    payer: 徐杰/6214830922351472
+    batch_number_sys: 2667c2b65ed4cbdf3f5731302e32634a
+
+
+
+
+
+select t.* from FMS_TRANSACTION_DETAILS_HIS t left join FMS_BATCH_QUERY_CONDITION c on
+c.PAYER_BANK_ACCOUNT_NUM=t.BANK_NUMBER and c.CURRENCY_CODE=t.TRANSACTION_CURRENCY_CODE
+and c.CONDITION_AMOUNT=t.TRANSACTION_AMOUNT and c.QUERY_TYPE=t.TRANSACTION_TYPE
+where t.ENABLED_FLAG = '0' and (t.MATCH_ELE_MARK <> '1' or t.MATCH_ELE_MARK is null)
+and c.CONDITION_TYPE = :conditionType and c.CONDITION_BATCH_NO = :conditionBatchNo
+and t.TRANSACTION_DATE >= c.CONDITION_BEGIN_DATE and t.TRANSACTION_DATE <= c.CONDITION_END_DATE
+Map<String, Object> params = new HashMap<>();
+params.put("conditionType", FmsEnumType.conditionType.CONDITION_TYPE_004.getValue());
+params.put("conditionBatchNo", conditionBatchNo);
+
+
+回单：
+0001_201691723431：
+    id： 8f08e24d722e6faee13331302e3255f8
+    payer: 安徽杭港时代产业园发展有限公司/20010493433666600000011
+    batch_number_sys: 8f08e24d0fe0296f0bf831302e325438
+    transaction_date：2026-02-12 00:00:00
+
+流水
+oth: 凤汉雄/6214855472268529
+  fms_business_no: b2dcceb9905cb68a2f435e9e8b0293f8e62c13981320834d12282226fce5a6cc
+  transaction_id: 8f08e24d0fe0296f0bf831302e325438
+  transaction_no: 201676202886_0001
+  transaction_date: 2026-02-11 18:31:10
+
+
+
+
+
+
+# 授信台账
+
+| # | 表名 | 说明 | 类名 | 列数 |
+|---|------|------|------|------|
+| 1 | `FMS_CREDIT_HEADER` | 银行授信表 | `FmsCreditHeaderEntity` | 43 |
+| 2 | `FMS_CREDIT_BREED` | 授信品种表 | `FmsCreditBreedEntity` | 10 |
+| 3 | `FMS_CREDIT_ALLOCATION_CHILD` | 授信分配子表 | `FmsCreditAllocationChildEntity` | 17 |
+| 4 | `FMS_CREDIT_USAGE_RECORD` | 用信额度占用记录表.  | `FmsCreditUsageRecordEntity` | 24 |
+| 5 | `FMS_CREDIT_ALLOCATION` | 授信分配表 | `FmsCreditAllocationEntity` | 14 |
+| 6 | `FMS_CREDIT_ALLOCATION_CHILD` | 授信分配子表 | `FmsCreditAllocationChildEntity` | 17 |
+
+#### `FMS_CREDIT_HEADER` — 银行授信表
+
+- **实体类**: `FmsCreditHeaderEntity`
+- **子包**: `credit`
+- **文件**: `FmsCreditHeaderEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 01 | `GROUP_ID` | `groupId` | `String` | 集团ID |
+| 07 | `CREDIT_CODE` | `creditCode` | `String` | 授信编号 |
+| 08 | `APPLY_ID` | `applyId` | `String` | 申请记录 |
+| 09 | `CREDIT_MODEL` | `creditModel` | `String` | 授信模式 |
+| 10 | `LE_ID` | `leId` | `String` | 授信单位 |
+| 11 | `CREDIT_CONTRACT_NO` | `creditContractNo` | `String` | 授信合同号 |
+| 12 | `BANK_ID` | `bankId` | `String` | 合作银行 |
+| 13 | `CURRENCY_CODE` | `currencyCode` | `String` | 授信币种 |
+| 14 | `CREDIT_START_DATE` | `creditStartDate` | `Date` | 开始日期 |
+| 15 | `CREDIT_END_DATE` | `creditEndDate` | `Date` | 结束日期 |
+| 16 | `HANG_CASH` | `hangCash` | `String` | 是否挂保证金 |
+| 17 | `REMARK` | `remark` | `String` | 备注 |
+| 18 | `FACILITY_APPLY_NO` | `facilityApplyNo` | `String` | 授信申请单单号 |
+| 19 | `GROUP_CREDIT_FLAG` | `groupCreditFlag` | `String` | 是否集团授信 |
+| 20 | `STATUS` | `status` | `String` | 业务状态 |
+| 21 | `USERD_LIMIT` | `userdLimit` | `BigDecimal` | 已占用总额 |
+| 22 | `CREDIT_LIMIT` | `creditLimit` | `BigDecimal` | 授信总额 |
+| 23 | `OBSOLETE_FINISHED_REASON` | `obsoleteFinishedReason` | `String` | 原因（废弃原因，结项原因） |
+| 24 | `OBSOLETE_FINISHED_DATE` | `obsoleteFinishedDate` | `Date` | 日期（废弃日期，结项日期） |
+| 25 | `ENSURE_LIMIT` | `ensureLimit` | `BigDecimal` | 保证金金额 |
+| 26 | `ENSURE_RATE` | `ensureRate` | `BigDecimal` | 保证金比例 |
+| 27 | `BOE_ID` | `boeId` | `String` | 单据id |
+| 28 | `BOE_TYPE_CODE` | `boeTypeCode` | `String` | 单据编码 |
+| 29 | `CATEGORY_CODE` | `categoryCode` | `String` | 单据归类编码 |
+| 30 | `REMAIN_LIMIT` | `remainLimit` | `BigDecimal` | 剩余可用额度 |
+| 31 | `REMAIN_RATE` | `remainRate` | `BigDecimal` | 剩余比例% |
+| 32 | `STANDARD_CURRENCY_RATE` | `standardCurrencyRate` | `BigDecimal` |  |
+| 33 | `STANDARD_CURRENCY_AMOUNT` | `standardCurrencyAmount` | `BigDecimal` |  |
+| 34 | `BUSINESS_REMINDER_PERSON` | `businessReminderPerson` | `String` | 业务提醒人 |
+| 35 | `BANK_HEAD_CODE` | `bankHeadCode` | `String` | 总行 |
+| 36 | `TERM_DAYS` | `termDays` | `Integer` | 期限天数 |
+| 37 | `FROZEN_QUOTA` | `frozenQuota` | `BigDecimal` | 冻结额度/在途额度 |
+| 38 | `BOE_NO` | `boeNo` | `String` | 授信申请单号 |
+| 39 | `FINANCING_CREDIT_TYPE` | `financingCreditType` | `String` | 授信申请类型 |
+| 40 | `IS_DIRECT_CREDIT` | `isDirectCredit` | `String` | 是否授信直联 |
+| 41 | `LEGAL_PERSON` | `legalPerson` | `String` |  |
+| 42 | `LEGAL_PERSON_NAME` | `legalPersonName` | `String` |  |
+| 43 | `BUDGET_ID` | `budgetId` | `String` | AI_GENERATE_START [1329195] 授信预算关联 |
+
+#### `FMS_CREDIT_BREED` — 授信品种表
+
+- **实体类**: `FmsCreditBreedEntity`
+- **子包**: `credit`
+- **文件**: `FmsCreditBreedEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 1 | `GROUP_ID` | `groupId` | `String` | 集团ID |
+| 7 | `CREDIT_ID` | `creditId` | `String` | 授信ID |
+| 8 | `CREDIT_TYPE` | `creditType` | `String` | 授信类型(单品种、综合品种) |
+| 9 | `CREDIT_LIMIT` | `creditLimit` | `BigDecimal` | 授信额度 |
+| 10 | `OCCUPY_TYPE` | `occupyType` | `String` | 占用方式 |
+
+#### `FMS_CREDIT_BREED_CHILD` — 授信子品种表
+
+- **实体类**: `FmsCreditBreedChildEntity`
+- **子包**: `credit`
+- **文件**: `FmsCreditBreedChildEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 01 | `CREDIT_ID` | `creditId` | `String` | 授信ID |
+| 04 | `BREED_ID` | `breedId` | `String` | 授信品种ID |
+| 05 | `CREDIT_BREED_TYPE` | `creditBreedType` | `String` | 授信品种类型 |
+| 06 | `SUB_CREDIT_BREED_TYPE` | `subCreditBreedType` | `String` | 授信小类 |
+| 07 | `MAX_LIMIT` | `maxLimit` | `BigDecimal` | 最高额度 |
+| 08 | `USERD_LIMIT` | `userdLimit` | `BigDecimal` | 已占用额度 |
+| 09 | `AVAILABLE_LIMIT` | `availableLimit` | `BigDecimal` | 可用额度 |
+| 10 | `QUOTA` | `quota` | `BigDecimal` | 额度 |
+| 11 | `FINANCING_CREDIT_BUDGET_TYPE` | `financingCreditBudgetType` | `String` | 预算类型 |
+| 12 | `USED_CREDIT_NO` | `usedCreditNo` | `String` | 关联预算 |
+| 13 | `FROZEN_QUOTA` | `frozenQuota` | `BigDecimal` | 冻结额度/在途额度 |
+| 14 | `RISK_TYPE` | `riskType` | `String` | 风险类型 |
+| 15 | `QUOTA_ID` | `quotaId` | `String` | 用信id |
+| 16 | `QUOTA_BREED_ID` | `quotaBreedId` | `String` | 用信分类id |
+| 17 | `QUOTA_DETAIL_ID` | `quotaDetailId` | `String` | 用信品种id |
+
+#### `FMS_CREDIT_USAGE_RECORD` — 用信额度占用记录表.
+
+- **实体类**: `FmsCreditUsageRecordEntity`
+- **子包**: `innerloan`
+- **文件**: `FmsCreditUsageRecordEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 1 | `QUOTA_ID` | `quotaId` | `String` | 额度ID. |
+| 2 | `CREDIT_CODE` | `creditCode` | `String` | 用信编码. |
+| 3 | `CREDIT_ID` | `creditId` | `String` | 用信ID. |
+| 4 | `CREDIT_MODE` | `creditMode` | `String` | 用信方式. |
+| 5 | `BUS_MODE` | `busMode` | `String` | 业务方式. |
+| 6 | `CREDIT_LE_ID` | `creditLeId` | `String` | 用信主体. |
+| 7 | `PROVIDER_LE_ID` | `providerLeId` | `String` | 供信主体. |
+| 8 | `PARTNER_BANK` | `partnerBank` | `String` | 合作银行. |
+| 9 | `PARTNER_INSTITUTION` | `partnerInstitution` | `String` | 合作机构. |
+| 10 | `CURRENCY_CODE` | `currencyCode` | `String` | 用信币种. |
+| 11 | `CREDIT_AMOUNT` | `creditAmount` | `BigDecimal` | 用信金额. |
+| 12 | `START_DATE` | `startDate` | `Date` | 起始日期. |
+| 13 | `END_DATE` | `endDate` | `Date` | 终止日期. |
+| 14 | `CREDIT_DAYS` | `creditDays` | `BigDecimal` | 用信天数. |
+| 15 | `GROUP_ID` | `groupId` | `String` | 组ID. |
+| 16 | `ARCHIVE_FLAG` | `archiveFlag` | `String` | 归档标识,0已归档,1未归档. |
+| 17 | `ARCHIVE_DATE` | `archiveDate` | `Date` | 归档时间. |
+| 18 | `USED_TYPE` | `usedType` | `String` | 占用类型. |
+| 19 | `BREED_ID` | `breedId` | `String` | 用信品种ID |
+| 20 | `CREDIT_TYPE` | `creditType` | `String` | 用信/授信类型(单品种、综合品种). |
+| 21 | `DETAIL_ID` | `detailId` | `String` | 用信额度明细ID. |
+| 22 | `USED_CREDIT_TYPE` | `usedCreditType` | `String` | 用信类型/授信品种. |
+| 23 | `USED_DATE` | `usedDate` | `Date` | 占用时间. |
+| 24 | `SUB_CREDIT_ID` | `subCreditId` | `String` | 业务id. |
+
+#### `FMS_CREDIT_ALLOCATION` — 授信分配表
+
+- **实体类**: `FmsCreditAllocationEntity`
+- **子包**: `credit`
+- **文件**: `FmsCreditAllocationEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 1 | `GROUP_ID` | `groupId` | `String` | 集团ID |
+| 2 | `EXTEND_S1` | `extendS1` | `String` | 拓展字段S1 |
+| 3 | `EXTEND_S2` | `extendS2` | `String` | 拓展字段S2 |
+| 4 | `EXTEND_S3` | `extendS3` | `String` | 拓展字段S3 |
+| 5 | `EXTEND_N1` | `extendN1` | `BigDecimal` | 拓展字段N1 |
+| 6 | `EXTEND_D1` | `extendD1` | `Date` | 拓展字段D1 |
+| 7 | `CREDIT_ID` | `creditId` | `String` | 授信ID |
+| 8 | `CREDIT_BREED_ID` | `creditBreedId` | `String` | 授信品种ID |
+| 9 | `LE_ID` | `leId` | `String` | 额度使用单位 |
+| 10 | `CREDIT_TYPE` | `creditType` | `String` | 授信类型(单品种、综合品种) |
+| 11 | `REMARK` | `remark` | `String` | 分配说明 |
+| 12 | `ALLOCATION_LIMIT` | `allocationLimit` | `BigDecimal` | 分配额度 |
+| 13 | `OCCUPY_TYPE` | `occupyType` | `String` | 占用方式 |
+| 14 | `ALLOCATION_TYPE` | `allocationType` | `String` | 分配方式 |
+
+#### `FMS_CREDIT_ALLOCATION_CHILD` — 授信分配子表
+
+- **实体类**: `FmsCreditAllocationChildEntity`
+- **子包**: `credit`
+- **文件**: `FmsCreditAllocationChildEntity.java`
+
+| # | 列名 | Java字段 | 类型 | 说明 |
+|---|------|---------|------|------|
+| 1 | `GROUP_ID` | `groupId` | `String` | 创建时间 |
+| 2 | `EXTEND_S1` | `extendS1` | `String` | 拓展字段S1 |
+| 3 | `EXTEND_S2` | `extendS2` | `String` | 拓展字段S2 |
+| 4 | `EXTEND_S3` | `extendS3` | `String` | 拓展字段S3 |
+| 5 | `EXTEND_N1` | `extendN1` | `BigDecimal` | 拓展字段N1 |
+| 6 | `EXTEND_D1` | `extendD1` | `Date` | 拓展字段D1 |
+| 7 | `CREDIT_ID` | `creditId` | `String` | 授信ID |
+| 8 | `CREDIT_BREED_ID` | `creditBreedId` | `String` | 授信品种ID |
+| 9 | `CREDIT_BREED_CHILD_ID` | `creditBreedChildId` | `String` | 授信品种子ID |
+| 10 | `CREDIT_ALLOCATION_ID` | `creditAllocationId` | `String` | 分配ID |
+| 11 | `CREDIT_BREED_TYPE` | `creditBreedType` | `String` | 授信品种类型 |
+| 12 | `SUB_CREDIT_BREED_TYPE` | `subCreditBreedType` | `String` | 授信小类 |
+| 13 | `ALLOCATION_MAX_LIMIT` | `allocationMaxLimit` | `BigDecimal` | 分配最高额度 |
+| 14 | `LE_ID` | `leId` | `String` | 额度使用单位 |
+| 15 | `AVAILABLE_LIMIT` | `availableLimit` | `BigDecimal` | 可用额度 |
+| 16 | `USERD_LIMIT` | `userdLimit` | `BigDecimal` | 已占用额度 |
+| 17 | `FROZEN_QUOTA` | `frozenQuota` | `BigDecimal` | 冻结额度/在途额度 |

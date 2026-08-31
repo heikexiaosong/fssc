@@ -4,7 +4,7 @@ watch cn.ztessc.service.LdgCommonService calcFormula '{params}' "params.length =
 
 watch java.util.Map computeIfAbsent 'target' -x 2
 
-watch cn.ztessc.service.LdgCommonService#calcFormul '{params}'  "params.length == 3" -b -x 2
+watch cn.ztessc.service.provide.FmsBoeLedgerHandleService buildFmsBaseData '{params}'   -b -x 2
 
 
 watch cn.ztessc.service.boe.FmsPaymentApplyHeaderService assembleQualificationOrganizationData "{params, returnObj}" -s -x 3
@@ -22,7 +22,11 @@ mvn deploy:deploy-file -Dfile=target/zfs-op-server.jar -Dversion=4.1.2.6.7 -Dgro
 mvn deploy:deploy-file -Dfile=pom.xml -Dversion=4.1.2.6.1 -DgroupId=cn.ztessc -DartifactId=zfs-portal-core -Dpackaging=pom  -Durl=http://gitlab.ztccloud.com.cn:8088/nexus/content/repositories/releases/ -DrepositoryId=public
 
 
+# 强制让JVM做一次采样并统计特定类的数量
+vmtool --action getInstances --className org.hibernate.engine.spi.EntityKey --limit 10
 
+# 假设你的 Java 进程号是 12345
+jcmd 234173 GC.class_histogram | grep org.hibernate.engine.spi.EntityKey
 
 
 watch cn.ztessc.common.service.SqlService page "{params[0]}" -s -x 3

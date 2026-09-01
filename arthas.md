@@ -13,7 +13,7 @@ watch cn.ztessc.service.boe.FmsPaymentApplyHeaderService assembleQualificationOr
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3
 
 
-watch cn.ztessc.service.inneraccount.FmsInnerInterrateRecordService calculateIntereste "{params, returnObj}" -s -x 3
+watch cn.ztessc.route.BankRouteHandle sendRequestNew "{params[0], returnObj}" -s -x 3
 
 
 ### 推包
@@ -27,6 +27,10 @@ vmtool --action getInstances --className org.hibernate.engine.spi.EntityKey --li
 
 # 假设你的 Java 进程号是 12345
 jcmd 234173 GC.class_histogram | grep org.hibernate.engine.spi.EntityKey
+
+
+watch cn.ztessc.route.BankRouteHandle todayAccountBlance "returnObj.size()" -n 1000 -x 2
+
 
 
 watch cn.ztessc.common.service.SqlService page "{params[0]}" -s -x 3

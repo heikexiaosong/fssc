@@ -15,6 +15,8 @@ watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFr
 
 watch cn.ztessc.route.BankRouteHandle sendRequestNew "{params[0], returnObj}" -s -x 3
 
+watch cn.ztessc.service.collateral.FmsCollateralManageService queryList "{params, returnObj}" -s -x 3
+
 
 ### 推包
 mvn deploy:deploy-file -Dfile=target/zfs-op-server.jar -Dversion=4.1.2.6.7 -DgroupId=cn.ztessc -DartifactId=zfs-op-server -Dpackaging=jar  -Durl=http://gitlab.ztccloud.com.cn:8088/nexus/content/repositories/releases/ -DrepositoryId=public

@@ -7,7 +7,7 @@ watch java.util.Map computeIfAbsent 'target' -x 2
 watch cn.ztessc.service.provide.FmsBoeLedgerHandleService buildFmsBaseData '{params}'   -b -x 2
 
 
-watch cn.ztessc.service.boe.FmsPaymentApplyHeaderService assembleQualificationOrganizationData "{params, returnObj}" -s -x 3
+watch cn.ztessc.service.pool.FmsPoolReorgService queryAllSubLeIdByLeId "{params, returnObj}" -s -x 3
 
 
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3

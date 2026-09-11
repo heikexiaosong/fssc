@@ -1,0 +1,96 @@
+{
+    "labelCode": "employeeName",
+    "requestUrl": "common/emp/queryPageNoAccount",
+    "fieldSet": {
+        "id": "empId",
+        "code": "code",
+        "name": "name"
+    },
+    "trans": [
+        {
+            "from": "realName",
+            "to": "employeeName"
+        },
+        {
+            "from": "id",
+            "to": "employeeId"
+        },
+        {
+            "from": "empNo",
+            "to": "employeeCode"
+        },
+        {
+            "from": "id",
+            "to": "extendS1"
+        },
+        {
+            "from": "deptId",
+            "to": "employeeDeptId"
+        },
+        {
+            "from": "companyId",
+            "to": "employeeCompanyId"
+        },
+        {
+            "from": "companyName",
+            "to": "employeeCompanyName"
+        },
+        {
+            "from": "deptName",
+            "to": "employeeDeptName"
+        }
+    ],
+    "config": {
+        "autoQuery": "Y",
+        "field": [
+            {
+                "code": "empNo",
+                "label": "员工编号"
+            },
+            {
+                "code": "deptName",
+                "label": "部门名称"
+            },
+            {
+                "code": "companyName",
+                "label": "公司名称"
+            },
+            {
+                "code": "postName",
+                "label": "岗位名称"
+            },
+            {
+                "code": "realName",
+                "label": "员工姓名"
+            }
+        ],
+        "query": [
+            {
+                "code": "realName",
+                "label": "员工名称",
+                "type": "text"
+            },
+            {
+                "code": "empNo",
+                "label": "员工编号",
+                "type": "text"
+            }
+        ],
+        "singleGrid": "Y"
+    },
+    "params": {
+        "validityFlag": "0"
+    },
+    "ledgerConfig": {
+        "employeeId": {
+            "translateType": "id",
+            "sourceCode": "employeeId",
+            "trans": [
+                {
+                    "from": "name",
+                    "to": "employeeName"
+                }
+            ]
+        }
+    }
+}

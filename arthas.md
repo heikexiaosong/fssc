@@ -4,10 +4,14 @@ watch cn.ztessc.service.LdgCommonService calcFormula '{params}' "params.length =
 
 watch java.util.Map computeIfAbsent 'target' -x 2
 
-watch cn.ztessc.service.provide.FmsBoeLedgerHandleService buildFmsBaseData '{params}'   -b -x 2
+watch cn.ztessc.service.emp.ZfsAuthService update '{params}'   -b -x 2
 
 
-watch cn.ztessc.service.pool.FmsPoolReorgService queryAllSubLeIdByLeId "{params, returnObj}" -s -x 3
+watch cn.ztessc.service.bill.LdgFmsBillAccountService externalQueryPage "{params, returnObj}" -s -x 3
+
+watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient externalQueryPageForFms "{params, returnObj}" -s -x 3
+
+
 
 
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3
@@ -15,7 +19,9 @@ watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFr
 
 watch cn.ztessc.route.BankRouteHandle sendRequestNew "{params[0], returnObj}" -s -x 3
 
-watch cn.ztessc.service.collateral.FmsCollateralManageService queryList "{params, returnObj}" -s -x 3
+watch cn.ztessc.service.boe.SysBoeTypeService findVersionByBoeTypeId "{params, returnObj}" -s -x 2
+
+watch  cn.ztessc.service.boedesign.SysBoePageService findOne "{params, ,throwExp}" -e -x 3
 
 
 ### 推包
@@ -37,6 +43,7 @@ watch cn.ztessc.route.BankRouteHandle todayAccountBlance "returnObj.size()" -n 1
 
 watch cn.ztessc.common.service.SqlService page "{params[0]}" -s -x 3
 
+cn.ztessc.common.service.BaseService#findAll(org.springframework.data.jpa.domain.Specification<T>, org.springframework.data.domain.Sort)
 
 
 @ArrayList[

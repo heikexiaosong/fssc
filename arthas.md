@@ -7,7 +7,7 @@ watch java.util.Map computeIfAbsent 'target' -x 2
 watch cn.ztessc.service.emp.ZfsAuthService update '{params}'   -b -x 2
 
 
-watch cn.ztessc.service.bill.LdgFmsBillAccountService externalQueryPage "{params, returnObj}" -s -x 3
+watch cn.ztessc.utils.ExcelBizHelperUtil readExcelToSheets "{returnObj}" -s -x 3
 
 watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient externalQueryPageForFms "{params, returnObj}" -s -x 3
 
@@ -17,11 +17,11 @@ watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient externalQueryPageForFms "{para
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3
 
 
-watch cn.ztessc.route.BankRouteHandle sendRequestNew "{params[0], returnObj}" -s -x 3
+watch cn.ztessc.service.boedesign.SysBoeFieldServicehandleAccountStructuresDetail "{params, returnObj}" -s -x 3
 
-watch cn.ztessc.service.boe.SysBoeTypeService findVersionByBoeTypeId "{params, returnObj}" -s -x 2
+watch cn.ztessc.service.voucher.base.AbstractVoucherCoreService setLineDistDefaultForVisualConfigSupply "{params[2]}" -s -x 3
 
-watch  cn.ztessc.service.boedesign.SysBoePageService findOne "{params, ,throwExp}" -e -x 3
+watch cn.ztessc.cache.utils.BaseDataTranslateUtils batchLoadToRedis "{params, throwExp}" -e -x 3
 
 
 ### 推包

@@ -4,14 +4,21 @@ watch cn.ztessc.service.LdgCommonService calcFormula '{params}' "params.length =
 
 watch java.util.Map computeIfAbsent 'target' -x 2
 
-watch cn.ztessc.service.emp.ZfsAuthService update '{params}'   -b -x 2
+
+- cn.ztessc.common.exception.ZteException: 数据已被他人修改，请刷新重试
+        at cn.ztessc.service.account.FmsAccountService.updateAccout(FmsAccountService.java:1300)
+        at cn.ztessc.service.account.FmsAccountService.save(FmsAccountService.java:1035)
+        at cn.ztessc.service.account.FmsAccountPrjService.save(FmsAccountPrjService.java:134)
+        at cn.ztessc.service.account.FmsAccountRegisterReviewService.applyReviewEffect(FmsAccountRegisterReviewService.java:605)
+        at cn.ztessc.service.account.FmsAccountRegisterReviewService.approve(FmsAccountRegisterReviewService.java:210)
+
+watch  cn.ztessc.service.account.FmsAccountRegisterReviewService loadActionReviews '{returnObj}'   -s -x 3
+watch  cn.ztessc.service.account.FmsAccountRegisterReviewService fillReviewUser '{params[0]}'   -s -b -x 3
 
 
 watch cn.ztessc.utils.ExcelBizHelperUtil readExcelToSheets "{returnObj}" -s -x 3
 
-watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient externalQueryPageForFms "{params, returnObj}" -s -x 3
-
-
+watch cn.ztessc.service.payment.FmsPaymentInstructionsService occupyReleaseBill "{params, returnObj}" -s -x 3
 
 
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3

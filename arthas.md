@@ -18,7 +18,13 @@ watch  cn.ztessc.service.account.FmsAccountRegisterReviewService fillReviewUser 
 
 watch cn.ztessc.utils.ExcelBizHelperUtil readExcelToSheets "{returnObj}" -s -x 3
 
-watch cn.ztessc.service.payment.FmsPaymentInstructionsService occupyReleaseBill "{params, returnObj}" -s -x 3
+watch cn.ztessc.service.bill.FmsBankDataSyncService synInnerDataByBank "{params[0]}" -s -x 3
+
+watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient synBillDataByBank "{params[0]}" -s -x 3
+
+watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient synBillDataByBank 'params[0].billAccountDTOList.{? #this.postalOrderCode == "630410004262620261008000713012"}' -s -x 4
+
+
 
 
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3

@@ -1,21 +1,3 @@
-{"@timestamp":"2026-09-21T01:18:00.068Z","type":"zfs-job","time":"2026-09-21 09:18:00","logger":"druid.sql.Statement","traceId":"","level":"ERROR","thread":"Druid-ConnectionPool-Create-625647461","message":"{conn-4383339, stmt-5013932} execute error. select 1 from dual","logFileType":"INFO_FILE","exceptionType":"","exception":"java.lang.NullPointerException: Cannot invoke \"com.alibaba.druid.wall.WallProvider.check(String)\" because \"this.provider\" is null\n\tat com.alibaba.druid.wall.WallFilter.checkInternal(WallFilter.java:806)\n\tat com.alibaba.druid.wall.WallFilter.check(WallFilter.java:801)\n\tat com.alibaba.druid.wall.WallFilter.statement_executeQuery(WallFilter.java:546)\n\tat com.alibaba.druid.filter.FilterChainImpl.statement_executeQuery(FilterChainImpl.java:2863)\n\tat com.alibaba.druid.filter.FilterAdapter.statement_executeQuery(FilterAdapter.java:2513)\n\tat com.alibaba.druid.filter.FilterEventAdapter.statement_executeQuery(FilterEventAdapter.java:296)\n\tat com.alibaba.druid.filter.FilterChainImpl.statement_executeQuery(FilterChainImpl.java:2863)\n\tat com.alibaba.druid.filter.FilterAdapter.statement_executeQuery(FilterAdapter.java:2513)\n\tat com.alibaba.druid.filter.FilterEventAdapter.statement_executeQuery(FilterEventAdapter.java:296)\n\tat com.alibaba.druid.filter.FilterChainImpl.statement_executeQuery(FilterChainImpl.java:2863)\n\tat com.alibaba.druid.proxy.jdbc.StatementProxyImpl.executeQuery(StatementProxyImpl.java:217)\n\tat com.alibaba.druid.pool.vendor.MySqlValidConnectionChecker.isValidConnection(MySqlValidConnectionChecker.java:143)\n\tat com.alibaba.druid.pool.DruidAbstractDataSource.validateConnection(DruidAbstractDataSource.java:1431)\n\tat com.alibaba.druid.pool.DruidAbstractDataSource.createPhysicalConnection(DruidAbstractDataSource.java:1823)\n\tat com.alibaba.druid.pool.DruidDataSource$CreateConnectionThread.run(DruidDataSource.java:2946)\n"} {"@timestamp":"2026-09-21T01:18:00.068Z","type":"zfs-job","time":"2026-09-21 09:18:00","logger":"druid.sql.Statement","traceId":"","level":"DEBUG","thread":"Druid-ConnectionPool-Create-625647461","message":"{conn-4383339, stmt-5013932} closed","logFileType":"INFO_FILE","exceptionType":"","exception":""}
-
-mongosh -u ztcfssc -p Ztcfssc_2022 --port 27017 --host ip ztefssc
-
-
-
-
-mongosh "mongodb://172.16.234.152:27017/ztefssc" --apiVersion 1 --username ztcfssc
-
-db.getSiblingDB("ztefssc").getCollection("zfs_data_push_his").find({busId: '8e6e9c3e08ed6521688e3137322e4d54'})
-
-
-db.getSiblingDB("ztefssc").getCollection("zfs_data_push_his").find({busId: '8e6e9c3e08ed6521688e3137322e4d54'}, {_id: 1,  pushCount : 1, requestUrl: 1, preId: 1, errorMsg: 1})
-
-
-kubectl --kubeconfig=/home/fssc/k8s/cd-prd-config -n skxtprd logs -f -l app=zfs-fms-server
-
-
 1.vpn登录
 参考vpn接入手册
 接入手册.docx
@@ -38,3 +20,47 @@ kubectl --kubeconfig=/home/fssc/k8s/cd-prd-config -n skxtprd logs -f -l app=zfs-
 账号：siku
 密码：Admin@123
 新密码：Ztefssc_2027
+
+
+
+id              ->  applicantAccount
+bankNumber      ->  applicantAccountNum
+leName          ->  leName
+leId            ->  leId
+accountName     ->  applicantAccountName
+openBank        ->  applicantBank
+openBankName    ->  applicantBankName
+bankHeadId      ->  openBank
+bankHeadIdName  ->  openBankName
+leId            ->  newLeId
+leName          ->  newLeName
+
+
+2、ssh登录 fspadmin@20.239.59.164（密码 2})jxmBp^#z={LMOF[9h ）
+
+5、kubectl -n fssc get pod  （查看pod）
+
+kubectl -n fssc logs -f --tail 100 pod/zfs-fms-server-646cd74675-8m4vv   （其中zfs-base-865cc87fcf-mx82z 为上个步骤查询到的pod的信息）
+
+先kubectl -n fssc get pod  （查看pod）
+kubectl -n fssc exec -ti zfs-fms-server-646cd74675-8m4vv /bin/sh
+
+196@189.cn
+cd]7ck3c*9NNda#Fv6fb
+https://www.ctyun.cn/h5/auth/login
+
+
+sh-4.2# grep "executed. selec.*from fms_transaction_details_his" aa.log | awk '{print $NF}'
+'400005552','400005569','400005555','400005549','400005540','400005580','400005566','400005544','400005567','400005560','400005577','400005568','400005545','400005548','400005571','400005550','400005559','400005558','400005546','400005557','400005553'
+
+
+
+
+{"@timestamp":"2026-10-20T18:00:02.872Z","type":"zfs-fms","time":"2026-10-21 02:00:02","logger":"druid.sql.Statement","traceId":"64422da0ce4b42c0b6a9f13941e1c6a2","level":"DEBUG","thread":"http-nio-28110-exec-1087","message":"{conn-12373, pstmt-1755317} executed. delete from fms_transaction_details_day\nwhere id in ('400005571', '400005561', '400005562', '400005563', '400005564', '400005565', '400005566', '400005567', '400005568', '400005569', '400005570', '400005560', '400005572', '400005573', '400005574', '400005575', '400005576', '400005577', '400005578', '400005579', '400005580', '400005550', '400005541', '400005542', '400005543', '400005544', '400005545', '400005546', '400005547', '400005548', '400005549', '400005540', '400005551', '400005552', '400005553', '400005554', '400005555', '400005556', '400005557', '400005558', '400005559')","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+
+
+{"@timestamp":"2026-10-21T05:00:22.491Z","type":"zfs-fms","time":"2026-10-21 13:00:22","logger":"druid.sql.Statement","traceId":"6dbcf3bdec1c408480b87371c71876a7","level":"DEBUG","thread":"async_thread4","message":"{conn-12370, pstmt-1766778} executed. delete from fms_balance_day\nwhere data_sources = '0'\n\tand register_date >= TIMESTAMP '2026-10-19 00:00:00.000'\n\tand register_date <= TIMESTAMP '2026-10-20 23:59:59.999'","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+
+
+{"@timestamp":"2026-10-21T05:00:22.674Z","type":"zfs-fms","time":"2026-10-21 13:00:22","logger":"druid.sql.Statement","traceId":"d17c99444fbc45ceb3a12747ee67f579","level":"DEBUG","thread":"async_thread8","message":"{conn-12377, pstmt-1766794} executed. delete from fms_transaction_details_day\nwhere data_sources = '0'\n\tand transaction_date <= TIMESTAMP '2026-07-21 23:59:59.999'","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+

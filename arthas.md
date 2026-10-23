@@ -16,7 +16,14 @@ watch  cn.ztessc.service.account.FmsAccountRegisterReviewService loadActionRevie
 watch  cn.ztessc.service.account.FmsAccountRegisterReviewService fillReviewUser '{params[0]}'   -s -b -x 3
 
 
-watch cn.ztessc.utils.ExcelBizHelperUtil readExcelToSheets "{returnObj}" -s -x 3
+watch java.util.Map getOrDefault "{params, returnObj}" -s -x 3
+
+watch cn.ztessc.service.payment.FmsElectronicReceiptService assembleBusData "target.idTransactionDetailsHisDTOMap" -x 3
+
+
+
+cn.ztessc.service.account.FmsTransactionDetailsDayService#findDTOByIds
+
 
 watch cn.ztessc.service.bill.FmsBankDataSyncService synInnerDataByBank "{params[0]}" -s -x 3
 
@@ -25,12 +32,14 @@ watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient synBillDataByBank "{params[0]}
 watch cn.ztessc.client.ZfsFmsBillDaoBillLdgClient synBillDataByBank 'params[0].billAccountDTOList.{? #this.postalOrderCode == "630410004262620261008000713012"}' -s -x 4
 
 
+watch cn.ztessc.service.provide.FmsBoeLedgerHandleService normalizeProfitAccountCompanionFields '{params[0].get("profitAccount")}'  -x 2 -b -s -n 5
+
 
 
 watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3
 
 
-watch cn.ztessc.service.boedesign.SysBoeFieldServicehandleAccountStructuresDetail "{params, returnObj}" -s -x 3
+watch cn.ztessc.common.table.TableOperaPostgre listCols "{params, returnObj}" -s -x 3
 
 watch cn.ztessc.service.voucher.base.AbstractVoucherCoreService setLineDistDefaultForVisualConfigSupply "{params[2]}" -s -x 3
 

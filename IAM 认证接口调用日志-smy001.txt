@@ -1,0 +1,39 @@
+# IAM 认证接口调用日志（第二次）
+
+## 1. 环境信息
+
+| 项目 | 内容 |
+|---|---|
+| IAM 环境 | TEST |
+| 请求方式 | POST |
+| 请求地址 | https://itest.umcare.cn/auth/api/user/appungateway/authenticate |
+| 请求时间 | 2026-11-09 15:07:20 |
+| 用户名 | smy001 |
+| 应用 ID | umcare_fsscsm |
+
+## 2. 请求参数
+
+```json
+{
+    "authnMethod": "pwd",
+    "userName": "smy001",
+    "secret": "58cee98c36454e56957c7362be214106",
+    "userNet": "",
+    "checkCode": "",
+    "appId": "umcare_fsscsm",
+    "clientIp": "127.0.0.1",
+    "password": "iFyKKsLh4GsYs6wmpKQ61iWLfFzonnXZtAYoMoTmoeNNll7mVxvmZig7+8VkS4OmCl+o+38wQsVzBB5VxeMkqbXYHelNTuqMVmafK2lJoUn8BMkDsA8seSkprCpe0U4x47cf6o7hkBDXCCRCn4DC2d2dm/uCHgLmlcD3su0+YJg=",
+    "clientId": ""
+}
+```
+
+## 3. 接口响应
+
+```json
+{
+    "message": "用户名或密码已过期（401）",
+    "code": "401",
+    "data": null,
+    "ticket": null
+}
+```

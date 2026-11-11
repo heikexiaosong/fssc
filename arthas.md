@@ -13,7 +13,7 @@ watch java.util.Map computeIfAbsent 'target' -x 2
         at cn.ztessc.service.account.FmsAccountRegisterReviewService.approve(FmsAccountRegisterReviewService.java:210)
 
 watch  cn.ztessc.service.account.FmsAccountRegisterReviewService loadActionReviews '{returnObj}'   -s -x 3
-watch  cn.ztessc.service.account.FmsAccountRegisterReviewService fillReviewUser '{params[0]}'   -s -b -x 3
+watch  cn.ztessc.client.ZfsFmsBillDaoBillLdgClient#getPostalOrderMapBySubTicket '{params[0]}'   -s -b -x 3
 
 
 watch java.util.Map getOrDefault "{params, returnObj}" -s -x 3
@@ -36,10 +36,22 @@ watch cn.ztessc.service.provide.FmsBoeLedgerHandleService normalizeProfitAccount
 
 
 
-watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl setValueFromBoeForm "{params}" -b -s -x 3
+watch cn.ztessc.boecommon.service.boe.ZfsBoeLinesService saveListNew "{params}" -b -s -x 3
+watch cn.ztessc.boecommon.service.base.AbstractBoeBaseCoreServiceImpl doSave "{params[0]}" -b -s -x 3
+watch cn.ztessc.boecommon.service.base.AbstractBoeFormCoreServiceImpl doValidate "{params[0].boeFormDto.zfsBoeLines}" -b -s -x 3
 
 
-watch cn.ztessc.common.table.TableOperaPostgre listCols "{params, returnObj}" -s -x 3
+cn.ztessc.service.account.FmsAccountService#getAccountIdList
+
+watch cn.ztessc.client.ZfsFmsSettlementDaoLdgClient queryPageForFmsNew "{params}" -s -x 3
+
+
+watch cn.ztessc.boecommon.service.base.AbstractBoeBaseCoreServiceImpl loadPreviewData "{returnObj}" -s -e -x 3
+
+
+watch cn.ztessc.service.config.FmsDictViewService listDictCodeByPcode "{params, returnObj, throwExp}" -s -e -x 3
+
+
 
 watch cn.ztessc.service.voucher.base.AbstractVoucherCoreService setLineDistDefaultForVisualConfigSupply "{params[2]}" -s -x 3
 

@@ -1,66 +1,44 @@
-1.vpn登录
-参考vpn接入手册
-接入手册.docx
-#vpn信息
-网关IP+端口：121.229.177.59:18888
-账号：libo
-密码：6b6449b6
-账号：penghu
-密码：3b7abd02
-账号：wangxueyan
-密码：ae0be70c
-账号：wangzemin
-密码：e487ee3e
-账号：wenxin
-密码：0dd133fe
-
-
-#堡垒机
-浏览器输入https://192.168.50.4:18443
-账号：siku
-密码：Admin@123
-新密码：Ztefssc_2027
-
-
-
-id              ->  applicantAccount
-bankNumber      ->  applicantAccountNum
-leName          ->  leName
-leId            ->  leId
-accountName     ->  applicantAccountName
-openBank        ->  applicantBank
-openBankName    ->  applicantBankName
-bankHeadId      ->  openBank
-bankHeadIdName  ->  openBankName
-leId            ->  newLeId
-leName          ->  newLeName
-
-
-2、ssh登录 fspadmin@20.239.59.164（密码 2})jxmBp^#z={LMOF[9h ）
-
-5、kubectl -n fssc get pod  （查看pod）
-
-kubectl -n fssc logs -f --tail 100 pod/zfs-fms-server-646cd74675-8m4vv   （其中zfs-base-865cc87fcf-mx82z 为上个步骤查询到的pod的信息）
-
-先kubectl -n fssc get pod  （查看pod）
-kubectl -n fssc exec -ti zfs-fms-server-646cd74675-8m4vv /bin/sh
-
-196@189.cn
-cd]7ck3c*9NNda#Fv6fb
-https://www.ctyun.cn/h5/auth/login
-
-
-sh-4.2# grep "executed. selec.*from fms_transaction_details_his" aa.log | awk '{print $NF}'
-'400005552','400005569','400005555','400005549','400005540','400005580','400005566','400005544','400005567','400005560','400005577','400005568','400005545','400005548','400005571','400005550','400005559','400005558','400005546','400005557','400005553'
+update fms_pending_board
+set create_by = '8666a8914379bf121c7e3139322e1047', create_date = TIMESTAMP '2026-11-05 15:44:06.913', enabled_flag = '0', last_update_by = '8666a8914379bf121c7e3139322e1047', last_update_date = TIMESTAMP '2026-11-05 20:45:26.185', validity_flag = '0', apply_amount = null, bill_key = null, bill_status = '007', boe_abstract = '12', boe_date = TIMESTAMP '2026-11-05 20:45:25.000', boe_id = '46925a6c45c5644f1d393139322e00a5', boe_kind_code = '14', boe_no = 'ZDH-261105FX0004', boe_status_code = '20', boe_summary = null, boe_template_code = 'TEMPLATE_INNER_UPDATEING_ACCOUNT_FMS', boe_type_code = 'GX081105', boe_type_id = '8666a89144bcf0e1bc493139322e109b', boe_type_name = '内部账户变更1105', business_model_code = '5', data_source_code = '1', dispose_user_account = 'XYY666', dispose_user_id = null, dispose_user_name = 'cdw测试员工超长名称测试员工超长名称测试员工超长名称', emp_id = '8666a8914379369452483139322e1042', emp_name = null, form_type_id = 'FMS_INNER_BOE', group_id = 'af2691f041f0d96066d73139322e0007', le_id = 'fb935a9a42df4d52fd9f3139322e0d2e', node_name = '人工任务1', operation_type_code = '903', operation_type_name = '票据托收', payment_currency = null, payment_currency_name = null, pending_source = 'foe_core', redirect_url = null, task_id = '9913dfeb45083f774c303139322e2868'
+where id = '5d862b2e45c56a4318d73139322e01ca'
 
 
 
 
-{"@timestamp":"2026-10-20T18:00:02.872Z","type":"zfs-fms","time":"2026-10-21 02:00:02","logger":"druid.sql.Statement","traceId":"64422da0ce4b42c0b6a9f13941e1c6a2","level":"DEBUG","thread":"http-nio-28110-exec-1087","message":"{conn-12373, pstmt-1755317} executed. delete from fms_transaction_details_day\nwhere id in ('400005571', '400005561', '400005562', '400005563', '400005564', '400005565', '400005566', '400005567', '400005568', '400005569', '400005570', '400005560', '400005572', '400005573', '400005574', '400005575', '400005576', '400005577', '400005578', '400005579', '400005580', '400005550', '400005541', '400005542', '400005543', '400005544', '400005545', '400005546', '400005547', '400005548', '400005549', '400005540', '400005551', '400005552', '400005553', '400005554', '400005555', '400005556', '400005557', '400005558', '400005559')","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+fms_pending_board.dispose_user_name
 
 
-{"@timestamp":"2026-10-21T05:00:22.491Z","type":"zfs-fms","time":"2026-10-21 13:00:22","logger":"druid.sql.Statement","traceId":"6dbcf3bdec1c408480b87371c71876a7","level":"DEBUG","thread":"async_thread4","message":"{conn-12370, pstmt-1766778} executed. delete from fms_balance_day\nwhere data_sources = '0'\n\tand register_date >= TIMESTAMP '2026-10-19 00:00:00.000'\n\tand register_date <= TIMESTAMP '2026-10-20 23:59:59.999'","logFileType":"INFO_FILE","exceptionType":"","exception":""}
-
-
-{"@timestamp":"2026-10-21T05:00:22.674Z","type":"zfs-fms","time":"2026-10-21 13:00:22","logger":"druid.sql.Statement","traceId":"d17c99444fbc45ceb3a12747ee67f579","level":"DEBUG","thread":"async_thread8","message":"{conn-12377, pstmt-1766794} executed. delete from fms_transaction_details_day\nwhere data_sources = '0'\n\tand transaction_date <= TIMESTAMP '2026-07-21 23:59:59.999'","logFileType":"INFO_FILE","exceptionType":"","exception":""}
-
+序号	Java属性名	数据库列名	数据类型	字段说明（源码注释）	备注（取值/业务逻辑）
+1	id	ID	String	实例ID，取自司库系统触发执行时自动生成	主键；UuidUtils（snowflakeId策略）自动生成
+2	dataSourceCode	DATA_SOURCE_CODE	String	数据来源系统，例如：司库系统、司库监控系统等	字典PENDING_BOARD_DATA_SOURCE；1=公司系统、2=司库资金系统（DataSource枚举）
+3	businessModelCode	BUSINESS_MODEL_CODE	String	单据所属业务模块，例如账户管理、票据管理等	字典PENDING_BOARD_BUSINESS_MODEL；MODEL_BILL票据管理=6（BusinessModel枚举）
+4	boeKindCode	BOE_KIND_CODE	String	单据名称编号，例如账户开户申请单	由BillPendingRelation按业务类型映射BoeKind枚举（如背书=KIND_ENDORSEMENT、贴现=KIND_DISCOUNT）
+5	redirectUrl	REDIRECT_URL	String	第三方应用回跳地址	外部系统待办跳转链接
+6	boeId	BOE_ID	String	单据Id	关联单据头表主键；更新/作废待办时的匹配键（优先于boeNo）
+7	boeNo	BOE_NO	String	单据编码	匹配键（boeId为空时使用）；billKey由此生成
+8	leId	LE_ID	String	核算主体ID	列表查询条件字段
+9	boeDate	BOE_DATE	Date	提单日期，日期格式精确到秒	单据提交时写入当前时间；查询按日期范围过滤（endOfDay）
+10	operationTypeCode	OPERATION_TYPE_CODE	String	单据中业务类型	票据业务类型代码：1出票/2背书/3质押/4质押解除/5贴现/7托收/8通用撤回
+11	operationTypeName	OPERATION_TYPE_NAME	String	单据中业务类型	业务类型名称；票据场景取头表businessTypeName
+12	boeTypeId	BOE_TYPE_ID	String	单据类型	（源码注释原样）
+13	boeTypeCode	BOE_TYPE_CODE	String	单据类型	单据类型代码；与boeTemplateCode同值（均取头表boeTypeCode）
+14	boeTemplateCode	BOE_TEMPLATE_CODE	String	单据母版类型	模板编码
+15	boeTypeName	BOE_TYPE_NAME	String	单据类型	单据类型名称；票据场景取businessTypeName
+16	taskId	TASK_ID	String	（源码注释原样为“单据类型”，系复制错误）	流程任务ID；取单据头表wfTaskId
+17	formTypeId	FORM_TYPE_ID	String	（源码注释原样为“单据类型”，系复制错误）	表单类型ID；构建待办时未赋值（代码已注释）
+18	billKey	BILL_KEY	String	（源码注释原样为“单据类型”，系复制错误）	单据标识；查询展示时由BoeKeyUtils.generateBoeKey(boeNo)生成
+19	empId	EMP_ID	String	提单人用户ID（源码注释原样为“提单人用户名称”）	申请人ID；查询“与我相关”的匹配条件之一（disposeUserId/empId/账号/createBy）
+20	empName	EMP_NAME	String	提单人用户名称	申请人姓名；取头表employeeName
+21	boeAbstract	BOE_ABSTRACT	String	备注	票据场景下来自收票业务信息remark（经请求级共享区暂存回取）
+22	paymentCurrency	PAYMENT_CURRENCY	String	取国际3位的统一货币代码，例如人民币：CNY	三级回退：头表currency→共享区暂存币种→头表paymentCurrency
+23	paymentCurrencyName	PAYMENT_CURRENCY_NAME	String	取国际3位的统一货币名称，例如人民币：CNY	币种名称
+24	applyAmount	APPLY_AMOUNT	BigDecimal	保留两位小数	申请金额；贴现/背书/质押/质押解除取票面金额amount，其余取applyAmount（空则兜底amount）
+25	nodeName	NODE_NAME	String	单据当前所处环节	流程节点名；流程启动/审批后更新
+26	disposeUserId	DISPOSE_USER_ID	String	（无注释）	待办处理人用户ID；"#"表示无待办人，落库前置空为null
+27	disposeUserAccount	DISPOSE_USER_ACCOUNT	String	（无注释）	待办处理人账号（工号）；“我的待办”匹配条件之一；"#"落库前置空
+28	disposeUserName	DISPOSE_USER_NAME	String	（无注释）	待办处理人姓名；"#"落库前置空
+29	boeStatusCode	BOE_STATUS_CODE	String	单据当前状态	0=作废、10=草稿、11=驳回，其余为审批流转状态（15/20/23/25/26/27/30/40等）
+30	billStatus	BILL_STATUS	String	票据当前状态	构建待办时未赋值（代码已注释）
+31	groupId	GROUP_ID	String	集团唯一标识	租户隔离；所有查询必带条件（同groupId）
+32	pendingSource	PENDING_SOURCE	String	用于区分数据来源哪个代码模块，方便区分调用不同的审核及查询接口	fms_bill_core=票据核心、fms_settlement_core=结算核心、foe_core、outer_api=外部接口
+33	boeSummary	BOE_SUMMARY	String	单据概要	模糊搜索字段：boeNoOrRemark关键字同时like boeNo和boeSummary

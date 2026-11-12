@@ -46,7 +46,7 @@ cn.ztessc.service.account.FmsAccountService#getAccountIdList
 watch cn.ztessc.client.ZfsFmsSettlementDaoLdgClient queryPageForFmsNew "{params}" -s -x 3
 
 
-watch cn.ztessc.boecommon.service.base.AbstractBoeBaseCoreServiceImpl loadPreviewData "{returnObj}" -s -e -x 3
+watch cn.ztessc.service.collateral.FmsCollateralManageService queryList "{params, returnObj}" -s -e -x 3
 
 
 watch cn.ztessc.service.config.FmsDictViewService listDictCodeByPcode "{params, returnObj, throwExp}" -s -e -x 3

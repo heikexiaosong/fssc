@@ -3,10 +3,7 @@
 - mqsTask.alertMqFailedMsg
 ```python
 # 查询最近1天内失败的消息数
-db.getSiblingDB("ztefssc").getCollection("zfs_data_push_send").find({
-        pushCount: { $gte: 10 },
-        updateTime: { $gte: ISODate("2026-10-01T15:49:00.415Z") }
-})
+db.getSiblingDB("ztefssc").getCollection("zfs_data_push_send").find({pushCount: { $gte: 10 }, updateTime: { $gte: ISODate("2026-11-11T14:49:00.415Z") }})
 
 
 

@@ -106,3 +106,7 @@ Caused by: java.net.SocketTimeoutException: Read timed out
 	at feign.SynchronousMethodHandler.executeAndDecode(SynchronousMethodHandler.java:102)
 	... 77 common frames omitted
 "
+
+
+
+

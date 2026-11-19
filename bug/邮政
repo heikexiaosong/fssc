@@ -1,0 +1,23 @@
+{"@timestamp":"2026-11-17T09:39:18.249Z","type":"zfs-fms","time":"2026-11-17 17:39:18","logger":"cn.ztessc.service.bill.FmsEleBillInstructionsPrjServic
+e","traceId":"77bce3ae4cd448088d952814e9ab221c","level":"ERROR","thread":"http-nio-28110-exec-2","message":"申请结果查询接口的结果处理异常：null","logF
+ileType":"INFO_FILE","exceptionType":"","exception":"java.lang.NullPointerException: null\n\tat cn.ztessc.service.boe.FmsBillOperatingRecordService.sav
+e(FmsBillOperatingRecordService.java:192)\n\tat cn.ztessc.service.boe.FmsBillOperatingRecordService$$FastClassBySpringCGLIB$$3a01ab94.invoke(<generated
+>)\n\tat org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvo
+cation.invokeJoinpoint(CglibAopProxy.java:792)\n\tat org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.ja
+va:163)\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)\n\tat org.springframework.transacti
+on.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)\n\tat org.springframework.transaction.interceptor.Transa
+ctionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)\n\tat org.springframework.transaction.interceptor.TransactionInterceptor.
+invoke(TransactionInterceptor.java:119)\n\tat org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)\n\tat org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89)\n\tat cn.ztessc.data.author.DataAuthorTraceAspect.trace(DataAuthor
+TraceAspect.java:60)\n\tat sun.reflect.GeneratedMethodAccessor182.invoke(Unknown Source)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(Delegati
+ngMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:634)\n\tat org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspect
+JAdvice.java:624)\n\tat org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:72)\n\tat org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)\n\tat org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)\n\tat o
+rg.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)\n\tat org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept
+(CglibAopProxy.java:707)\n\tat cn.ztessc.service.boe.FmsBillOperatingRecordService$$EnhancerBySpringCGLIB$$301eb160.save(<generated>)\n\tat cn.ztessc.s
+ervice.bill.FmsEleBillInstructionsService.updateMoreStatus(FmsEleBillInstructionsService.java:3997)\n\tat cn.ztessc.service.bill.FmsEleBillInstructionsService.disposeApplyResult(FmsEleBillInstructionsService.java:3892)\n\tat cn.ztessc.service.bill.FmsEleBillInstructionsService$$FastClassBySpringCGLIB$
+$b4ed523c.invoke(<generated>)\n\tat org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)\n\tat org.springframework.aop.framework.Cg
+libAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:792)\n\tat org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(Re
+flectiveMethodInvocation.java:163)\n\tat org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)\n\tat or
+g.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)\n\tat org.springframework.tra
+nsaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)\n\tat org.springframework.transaction.intercep
+tor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)\n\tat org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(Reflecti

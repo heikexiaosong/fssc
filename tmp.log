@@ -58,3 +58,30 @@ FMS_BREED_CHILD_USE
 2026-10-28 09:45:48.168  INFO 15950 --- [nio-8095-exec-1] c.z.e.s.scan.ScanClientCoreService       : 业务类型ID:E0C46E78307A6FFCE055AD5CED94E678, 暂未开启自动关联核算主体
 2026-10-28 09:45:48.170 ERROR 15950 --- [nio-8095-exec-1] c.z.e.c.scan.ScanClientController        : ScanClientController.FtpInfo response [result]==> {"code":"F","compensationUploadFlag":"
 N","errorMsg":"公司未配置站点！"}
+
+
+
+
+1ee1c4ad0a814602a0942b85e75e89a3
+
+d032356096f74866818ff9723444da35
+
+zgrep "09:46.*1ee1c4ad0a814602a0942b85e75e89a3" ../zfs-fms_elk/run.2026-11-17.*.log.gz
+
+zgrep "09:46.*d032356096f74866818ff9723444da35" ../zfs-fms_elk/run.2026-11-17.*.log.gz
+
+
+{"@timestamp":"2026-11-18T07:51:39.910Z","type":"zfs-fms","time":"2026-11-18 15:51:39","logger":"cn.ztessc.service.provide.FmsFinanceIncurredService","traceId":"21a729e7921d4322b64abeace95369ea","level":"WARN","thread":"http-nio-28110-exec-7","message":"获取授信信息失败：融资台账ID=0ddf1aa2c0bba5033c063137322e2c1c，融资编号=YFZJ40918000000027，未找到授信子品种ID或分配子ID","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+{"@timestamp":"2026-11-18T07:51:39.956Z","type":"zfs-fms","time":"2026-11-18 15:51:39","logger":"cn.ztessc.service.provide.FmsFinanceIncurredService","traceId":"21a729e7921d4322b64abeace95369ea","level":"INFO","thread":"http-nio-28110-exec-7","message":"【用信释放】占用金额和融资金额一致，直接使用发生额作为释放金额，占用金额=1000000000，融资金额=1000000000，发生额=885000000，释放金额=885000000.00","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+{"@timestamp":"2026-11-18T07:51:39.957Z","type":"zfs-fms","time":"2026-11-18 15:51:39","logger":"cn.ztessc.service.provide.FmsFinanceIncurredService","traceId":"21a729e7921d4322b64abeace95369ea","level":"INFO","thread":"http-nio-28110-exec-7","message":"【用信释放】债券/其他融资释放金额计算完成，占用金额=1000000000，发生额=885000000，融资金额=1000000000，释放金额=885000000.00","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+run.2026-11-18.15.log.gz:{"@timestamp":"2026-11-18T07:51:40.013Z","type":"zfs-fms","time":"2026-11-18 15:51:40","logger":"druid.sql.Statement","traceId":"21a729e7921d4322b64abeace95369ea","level":"DEBUG","thread":"http-nio-28110-exec-7","message":"{conn-10241, pstmt-1909921} executed. insert into FMS_CREDIT_USAGE_RECORD\n\t(CREDIT_TYPE, validity_flag, CREDIT_CODE, USED_TYPE, END_DATE\n\t, CURRENCY_CODE, create_by, ARCHIVE_DATE, BREED_ID, ARCHIVE_FLAG\n\t, PARTNER_INSTITUTION, last_update_by, CREDIT_MODE, ID, QUOTA_ID\n\t, USED_DATE, create_date, last_update_date, BUS_MODE, CREDIT_AMOUNT\n\t, CREDIT_DAYS, USED_CREDIT_TYPE, START_DATE, CREDIT_ID, GROUP_ID\n\t, enabled_flag, PARTNER_BANK, DETAIL_ID, SUB_CREDIT_ID, PROVIDER_LE_ID\n\t, CREDIT_LE_ID)\nvalues (null, '0', 'YFZJ40918000000027', '2', TIMESTAMP '2029-03-30 00:00:00.000'\n\t, 'CNY', '35c26ceb0f8fc01f41ff3137322e5142', null, null, null\n\t, null, '35c26ceb0f8fc01f41ff3137322e5142', '05', 'd680a3408995a59bba8c3137322e1a60', 'e0c7615d07ea5cc783393137322e5c1d'\n\t, null, TIMESTAMP '2026-11-18 15:51:39.958', TIMESTAMP '2026-11-18 15:51:39.999', '051', -885000000.00\n\t, 1096, '1', TIMESTAMP '2026-03-30 00:00:00.000', '0ddf1aa2c0bba5033c063137322e2c1c', '98384a38c6501ea777273132372e0008'\n\t, '0', null, 'e0c7615d07ea5ce948e13137322e5c1f', null, null\n\t, '36881a8cff3f1c0d98423137322e0db8')","logFileType":"INFO_FILE","exceptionType":"","exception":""}
+
+
+
+{
+      "openmetadata": {
+        "type": "http",
+        "url": "http://172.16.5.25:8585/mcp",
+        "headers": { "Authorization": "Bearer eyJraWQiOiJHYjM4OWEtOWY3Ni1nZGpzLWE5MmotMDI0MmJrOTQzNTYiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvcGVuLW1ldGFkYXRhLm9yZyIsInN1YiI6Im1jcC1hZ2VudCIsInJvbGVzIjpbIkRhdGFDb25zdW1lciJdLCJlbWFpbCI6Im1jcC1hZ2VudEBvcGVuLW1ldGFkYXRhLm9yZyIsImlzQm90Ijp0cnVlLCJ0b2tlblR5cGUiOiJCT1QiLCJ1c2VybmFtZSI6Im1jcC1hZ2VudCIsInByZWZlcnJlZF91c2VybmFtZSI6Im1jcC1hZ2VudCIsImlhdCI6MTc5NTA2MTA5OCwiZXhwIjpudWxsfQ.FbmgPMv0GSjItQ8bMBN3guttWrpUWROprz_W5R-6mtQ8HXinh52QPwgOOH6Qxx6vEfcHPf0AMhfSOc6tBcy8dp4kCi2shdyvCWs5z3roophksO0unXI668MNH1d3_sFBs16su0bdzJSIv_emsFJgFFwhQFC4hp6jrXqRo6lJA0lTXN53-qwRfAelysmTHnHXjaRYE9GJGir9_HTbx11d1BLMTfsslSPtj1raE450m_7RM-Y5qfuiQAsIMDcnShu0I5Eq7zDX-VWgYHsSDhKwx5dEprbdGwh2_b6q_qUKbyN__50XdhM414wAheq3oy3Liz0wormNeEzqc8WFn7yaUg" }
+      }
+}

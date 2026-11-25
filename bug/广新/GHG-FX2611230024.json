@@ -230,7 +230,8 @@
             "lastUpdateBy": null
         }
     ],
-    "internalDTOList": [
+    "warrantyId": "4e1e4c69f33b91eff55e3132372e197a",
+    "fmsInternalGuaranteeDTO":
         {
             "standardCurrency": "CNY",
             "lineAutoId": "8a4edd04-83ec-47fd-a634-f201e6f6986a",
@@ -348,7 +349,7 @@
             "lastUpdateBy": "3925d3f1c5de34ad35363132372e0352",
             "warrantyAmount": 10
         }
-    ],
+    ,
     "marginAmount": 0,
     "letterCurrencyName": "人民币",
     "lastUpdateDate": "2026-11-23 19:05:45",
@@ -2288,9 +2289,9 @@
     "guaranteeLimit": 0,
     "fmsCreditVDTO": {
         "id": "4e1e4c69f4439f5928893132372e1d11",
-        "breedChildId": null,
-        "creditId": null,
-        "breedId": null,
+        "breedChildId": "4e1e4c69f47c44f2f7d93132372e1d25",
+        "creditId": "4e1e4c69f4439f5928893132372e1d11",
+        "breedId": "4e1e4c69f47c44f24f9e3132372e1d24",
         "groupId": "98384a38c6501ea777273132372e0008",
         "createDate": "2026-11-23 17:08:26",
         "lastUpdateDate": "2026-11-23 19:05:45",

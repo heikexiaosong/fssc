@@ -18,7 +18,7 @@ watch  cn.ztessc.client.ZfsFmsBillDaoBillLdgClient#getPostalOrderMapBySubTicket 
 
 watch java.util.Map getOrDefault "{params, returnObj}" -s -x 3
 
-watch cn.ztessc.service.payment.FmsElectronicReceiptService assembleBusData "target.idTransactionDetailsHisDTOMap" -x 3
+watch cn.ztessc.boecommon.service.base.MongoDBBoeExtendServiceImpl readBoeLineExtendMap "target.idTransactionDetailsHisDTOMap" -x 3
 
 
 
@@ -46,14 +46,14 @@ cn.ztessc.service.account.FmsAccountService#getAccountIdList
 watch cn.ztessc.common.utils.reflect.EntityUtils setWho "{params}" -s -x 3
 
 
-watch cn.ztessc.service.pool.FmsCollectDownService calculationAmount "{params, returnObj}" -s -e -x 3
+watch cn.ztessc.service.voucher.FscVoucherHeadersService validateForReverseVoucher "{params, returnObj}" -s  -x 3
 
 
-watch cn.ztessc.service.config.FmsDictViewService listDictCodeByPcode "{params, returnObj, throwExp}" -s -e -x 3
+watch cn.ztessc.service.ledgerconfig.FmsLedgerDataExtendService validateIsNull "{params, returnObj, throwExp}" -s -e -x 3
 
 
 
-watch cn.ztessc.service.voucher.base.AbstractVoucherCoreService setLineDistDefaultForVisualConfigSupply "{params[2]}" -s -x 3
+watch cn.ztessc.service.ledgerconfig.FmsLedgerDataExtendService validateFieldConfigAndDealMultipleChoiceData "{params[1]}" -s -x 3
 
 watch cn.ztessc.cache.utils.BaseDataTranslateUtils batchLoadToRedis "{params, throwExp}" -e -x 3
 

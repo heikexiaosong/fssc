@@ -248,4 +248,48 @@ cn.ztessc.common.exception.ZteException: 追索权类型必填未填写，请重
 	at java.base/java.lang.Thread.run(Thread.java:840)
 
 
-	
+	<!--	<BANK_INFO BANK_CODE="104" NAME="中国银行" INTERFACE_IP="http://172.16.0.158:8070">-->
+		<BANK_INFO BANK_CODE="104" GROUP_CODE="394" NAME="中国银行" INTERFACE_IP="http://10.20.0.188:8065">
+			<INTERFACE_INFO INTERFACE_NAME="当日余额" INTERFACE_CODE="dayAccountBlance"
+							INTERFACE_URL="/boc/queryTodayAccountBalance"/>
+			<INTERFACE_INFO INTERFACE_NAME="历史余额" INTERFACE_CODE="hisAccountBlance"
+							INTERFACE_URL="boc/queryHistoryAccountBalance"/>
+			<INTERFACE_INFO INTERFACE_NAME="当日交易明细" INTERFACE_CODE="dayTransDetail"
+							INTERFACE_URL="boc/queryBankTransTodayDetails"/>
+			<INTERFACE_INFO INTERFACE_NAME="历史交易明细" INTERFACE_CODE="hisTransDetail"
+							INTERFACE_URL="boc/queryBankTransHisDetails"/>
+			<INTERFACE_INFO INTERFACE_NAME="公对公转账汇款" INTERFACE_CODE="corporateTrans"
+							INTERFACE_URL="/boc/corporateToCorporateTrans"/>
+			<INTERFACE_INFO INTERFACE_NAME="公对私转账汇款" INTERFACE_CODE="privateTrans"
+							INTERFACE_URL="boc/corporateToPrivateTrans"/>
+			<INTERFACE_INFO INTERFACE_NAME="交易状态查询" INTERFACE_CODE="transStatusQuery"
+							INTERFACE_URL="boc/transStatusQuery"/>
+			<INTERFACE_INFO INTERFACE_NAME="电子回单查询" INTERFACE_CODE="elecReceiptQuery" INTERFACE_URL="boc/elecReceiptQuery"/>
+			<INTERFACE_INFO INTERFACE_NAME="电子回单下载" INTERFACE_CODE="elecReceiptDownload"
+							INTERFACE_URL="boc/elecReceiptDownload"/>
+			<INTERFACE_INFO INTERFACE_NAME="资金池当日余额" INTERFACE_CODE="dayAccountCollectBlance" INTERFACE_URL="boc/queryPoolBalance"/>
+			<INTERFACE_INFO INTERFACE_NAME="资金池历史余额" INTERFACE_CODE="hisAccountCollectBlance" INTERFACE_URL="boc/queryPoolHistoryBalance"/>
+			<INTERFACE_INFO INTERFACE_NAME="资金池转账" INTERFACE_CODE="collectPoolTrans" INTERFACE_URL="boc/transferPool"/>
+			<INTERFACE_INFO INTERFACE_NAME="单张出票申请" INTERFACE_CODE="applyMoneyOrderDraw" INTERFACE_URL="boc/applyMoneyOrderDraw"/>
+			<INTERFACE_INFO INTERFACE_NAME="提示承兑申请" INTERFACE_CODE="applyMoneyOrderReminderAcceptance" INTERFACE_URL="boc/applyMoneyOrderReminderAcceptance"/>
+			<INTERFACE_INFO INTERFACE_NAME="提示收票申请" INTERFACE_CODE="applyMoneyOrderReminderIssuance" INTERFACE_URL="boc/applyMoneyOrderReminderIssuance"/>
+			<INTERFACE_INFO INTERFACE_NAME="持票查询" INTERFACE_CODE="allowAbleBill" INTERFACE_URL="boc/queryMoneyOrderList" />
+			<INTERFACE_INFO INTERFACE_NAME="应收票据查询" INTERFACE_CODE="allowAbleBillCMB" INTERFACE_URL="boc/queryBillDetailRetData" />
+			<INTERFACE_INFO INTERFACE_NAME="申请结果查询" INTERFACE_CODE="queryMoneyOrderApplyResult" INTERFACE_URL="boc/queryMoneyOrderApplyResult"/>
+			<INTERFACE_INFO INTERFACE_NAME="通用撤回申请" INTERFACE_CODE="canelMoneyOrderApply" INTERFACE_URL="boc/canelMoneyOrderApply"/>
+			<INTERFACE_INFO INTERFACE_NAME="撤票申请" INTERFACE_CODE="applyMoneyOrderIssuanceDestruction" INTERFACE_URL="boc/applyMoneyOrderIssuanceDestruction"/>
+			<INTERFACE_INFO INTERFACE_NAME="票据托收" INTERFACE_CODE="applyMoneyOrderPayment" INTERFACE_URL="boc/applyMoneyOrderPayment"/>
+			<INTERFACE_INFO INTERFACE_NAME="应收贴现" INTERFACE_CODE="applyMoneyOrderDiscounted" INTERFACE_URL="boc/applyMoneyOrderDiscounted"/>
+			<INTERFACE_INFO INTERFACE_NAME="质押解除" INTERFACE_CODE="applyPledgeRemove" INTERFACE_URL="boc/applyPledgeRemove"/>
+			<INTERFACE_INFO INTERFACE_NAME="质押申请" INTERFACE_CODE="applyMoneyOrderPledge" INTERFACE_URL="boc/applyMoneyOrderPledge"/>
+			<INTERFACE_INFO INTERFACE_NAME="背书申请" INTERFACE_CODE="applyMoneyOrderEndorsementResult" INTERFACE_URL="boc/applyMoneyOrderEndorsementResult"/>
+			<INTERFACE_INFO INTERFACE_NAME="应答查询" INTERFACE_CODE="queryPendingMoneyOrderReply" INTERFACE_URL="boc/queryPendingMoneyOrderReply"/>
+			<INTERFACE_INFO INTERFACE_NAME="应付票据单个消息查询" INTERFACE_CODE="queryBillInfoOrderReply" INTERFACE_URL="boc/queryBillInfoOrderReply"/>
+			<INTERFACE_INFO INTERFACE_NAME="票据交易结果查询" INTERFACE_CODE="queryBillTransactionResult" INTERFACE_URL="boc/queryMoneyOrderApplyResult"/>
+			<INTERFACE_INFO INTERFACE_NAME="单张出票申请" INTERFACE_CODE="applyMoneyOrderDraw" INTERFACE_URL="boc/applyMoneyOrderDraw"/>
+			<INTERFACE_INFO INTERFACE_NAME="提示承兑申请" INTERFACE_CODE="applyMoneyOrderReminderAcceptance" INTERFACE_URL="boc/applyMoneyOrderReminderAcceptance"/>
+			<INTERFACE_INFO INTERFACE_NAME="提示收票申请" INTERFACE_CODE="applyMoneyOrderReminderIssuance" INTERFACE_URL="boc/applyMoneyOrderReminderIssuance"/>
+			<INTERFACE_INFO INTERFACE_NAME="根据银行账号信息获取对账单文件地址" INTERFACE_CODE="bankStatementQuery" INTERFACE_URL="boc/statementDownloadUrl"/>
+			<INTERFACE_INFO INTERFACE_NAME="银行对账单文件下载" INTERFACE_CODE="bankReconciliationTaskQuery" INTERFACE_URL="boc/bankStatementFile"/>
+		</BANK_INFO>
+		</BANK_INFO>

@@ -46,7 +46,7 @@ cn.ztessc.service.account.FmsAccountService#getAccountIdList
 watch cn.ztessc.common.utils.reflect.EntityUtils setWho "{params}" -s -x 3
 
 
-watch cn.ztessc.service.voucher.FscVoucherHeadersService validateForReverseVoucher "{params, returnObj}" -s  -x 3
+watch cn.ztessc.service.credit.FmsBreedChildUseService occupyCreditBreedByGrt "{params, returnObj}" -s  -x 3
 
 
 watch cn.ztessc.service.ledgerconfig.FmsLedgerDataExtendService validateIsNull "{params, returnObj, throwExp}" -s -e -x 3
